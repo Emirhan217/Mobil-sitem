@@ -3,202 +3,200 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kral Oyun Sitem</title>
+    <title>Oyun Sitem</title>
     <style>
-        /* Genel Site Tasarımı */
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #121212;
-            color: #ffffff;
+        /* GENEL AYARLAR */
+        body, html {
             margin: 0;
             padding: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #000;
+            color: #fff;
+            scroll-behavior: smooth;
+            overflow-x: hidden;
         }
-        header {
-            background-color: #1f1f1f;
-            padding: 20px;
+
+        /* 3 SANİYELİK TEŞEKKÜR EKRANI */
+        #intro-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
             text-align: center;
-            border-bottom: 3px solid #ff4757;
+            padding: 20px;
+            animation: fadeOut 1s forwards 3s; /* 3 saniye bekle, 1 saniyede silin */
         }
-        nav a {
-            color: #ffffff;
+
+        #intro-overlay h2 {
+            font-size: 28px;
+            color: #39ff14; /* Neon Yeşil */
+            text-shadow: 0 0 10px #39ff14;
+        }
+
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; visibility: hidden; }
+        }
+
+        /* VİDEO EFEKTLİ ANA EKRAN */
+        .hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            background: linear-gradient(45deg, #000, #1a0033, #000);
+            background-size: 400% 400%;
+            animation: videoBackground 10s ease infinite; /* Video benzeri hareket */
+            text-align: center;
+        }
+
+        @keyframes videoBackground {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .hero h1 {
+            font-size: 80px;
+            margin: 0;
+            color: #bc13fe; /* Neon Mor */
+            text-shadow: 0 0 20px #bc13fe, 0 0 40px #bc13fe;
+            letter-spacing: 5px;
+        }
+
+        .hero p {
+            font-size: 20px;
+            color: #39ff14;
+            margin-top: 10px;
+        }
+
+        .explore-btn {
+            margin-top: 30px;
+            padding: 15px 40px;
+            font-size: 18px;
+            background: transparent;
+            color: #fff;
+            border: 2px solid #39ff14;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: 0.3s;
             text-decoration: none;
-            margin: 0 15px;
-            font-weight: bold;
+            box-shadow: 0 0 15px #39ff14;
         }
-        nav a:hover {
-            color: #ff4757;
+
+        .explore-btn:hover {
+            background: #39ff14;
+            color: #000;
+            box-shadow: 0 0 30px #39ff14;
         }
+
+        /* OYUNLAR BÖLÜMÜ */
         .container {
-            padding: 40px 20px;
-            max-width: 1200px;
-            margin: auto;
+            padding: 80px 20px;
+            text-align: center;
         }
-        
-        /* Oyunlar Bölümü */
-        #oyunlar {
+
+        .games-grid {
             display: flex;
             flex-wrap: wrap;
-            gap: 20px;
             justify-content: center;
-            margin-top: 20px;
+            gap: 25px;
+            margin-top: 40px;
         }
-        .oyun-kart {
-            background-color: #1f1f1f;
-            border-radius: 10px;
-            padding: 20px;
-            width: 250px;
-            text-align: center;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.5);
-            transition: transform 0.2s;
+
+        .game-card {
+            background: #111;
+            border: 1px solid #bc13fe;
+            border-radius: 15px;
+            padding: 25px;
+            width: 220px;
+            transition: 0.4s;
+            box-shadow: 0 0 10px #bc13fe44;
         }
-        .oyun-kart:hover {
-            transform: scale(1.05);
+
+        .game-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 0 25px #bc13fe;
+            background: #1a1a1a;
         }
-        .btn {
-            background-color: #ff4757;
-            color: white;
+
+        .game-card h3 {
+            color: #39ff14;
+            margin-bottom: 10px;
+        }
+
+        .game-btn {
+            background: #bc13fe;
+            color: #fff;
             border: none;
             padding: 10px 20px;
             border-radius: 5px;
             cursor: pointer;
-            text-decoration: none;
-            display: inline-block;
-            margin-top: 10px;
-        }
-        .btn:hover {
-            background-color: #e84118;
+            margin-top: 15px;
+            transition: 0.3s;
         }
 
-        /* --- ADMİN PANELİ STİLLERİ --- */
-        #admin-bolumu {
-            margin-top: 80px;
-            padding: 30px;
-            background-color: #1c1c1c;
-            border-top: 2px dashed #333;
-            border-radius: 10px;
-        }
-        .admin-kutusu {
-            max-width: 400px;
-            margin: 0 auto;
-            background-color: #2f3640;
-            padding: 25px;
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.6);
-        }
-        .admin-kutusu input {
-            width: 90%;
-            padding: 12px;
-            margin-bottom: 15px;
-            border-radius: 5px;
-            border: none;
-            font-size: 16px;
-        }
-        .admin-btn {
-            background-color: #4cd137;
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            font-size: 16px;
-            border-radius: 5px;
-            cursor: pointer;
-            width: 95%;
-        }
-        .admin-btn:hover {
-            background-color: #44bd32;
-        }
-        .hata-mesaji {
-            color: #ff4757;
-            margin-top: 15px;
-            display: none;
-            font-weight: bold;
-        }
-        .gizli-icerik {
-            display: none;
-            background-color: #2f3640;
-            padding: 30px;
-            border-radius: 8px;
-            border: 2px solid #4cd137;
-            margin-top: 20px;
+        .game-btn:hover {
+            background: #9d0fd3;
+            box-shadow: 0 0 10px #bc13fe;
         }
     </style>
 </head>
 <body>
 
-    <header>
-        <h1>Kral Oyun Dünyası</h1>
-        <nav>
-            <a href="#oyunlar">Oyunlar</a>
-            <a href="#hakkimizda">Hakkımızda</a>
-            <a href="#admin-bolumu">Admin Paneli</a>
-        </nav>
-    </header>
+    <div id="intro-overlay">
+        <h2>Ayhan abime siteyi yaptığımda bana destek olduğu için teşekkür ederim ❤️</h2>
+    </div>
 
-    <div class="container">
-        <h2 style="text-align: center; color: #ff4757;">Popüler Oyunlar</h2>
-        <div id="oyunlar">
-            <div class="oyun-kart">
-                <h3>Aksiyon Oyunu</h3>
-                <p>Macera dolu anlar seni bekliyor!</p>
-                <button class="btn">Oyna</button>
+    <section class="hero">
+        <h1>Oyun Sitem</h1>
+        <p>Geleceğin Oyun Dünyası Burada</p>
+        <a href="#oyunlar" class="explore-btn">Oyunları Keşfet</a>
+    </section>
+
+    <div class="container" id="oyunlar">
+        <h2 style="font-size: 40px; color: #bc13fe; text-shadow: 0 0 10px #bc13fe;">Popüler Oyunlar</h2>
+        
+        <div class="games-grid">
+            <div class="game-card">
+                <h3>Oyun 1</h3>
+                <p>Neon dünyasında aksiyona hazır ol!</p>
+                <button class="game-btn">Oyna</button>
             </div>
-            <div class="oyun-kart">
-                <h3>Yarış Oyunu</h3>
-                <p>Hız sınırlarını zorlamaya hazır mısın?</p>
-                <button class="btn">Oyna</button>
+            <div class="game-card">
+                <h3>Oyun 2</h3>
+                <p>Yüksek hız, yüksek heyecan!</p>
+                <button class="game-btn">Oyna</button>
             </div>
-            <div class="oyun-kart">
-                <h3>Strateji Oyunu</h3>
-                <p>Zekanı konuştur ve ordunu yönet!</p>
-                <button class="btn">Oyna</button>
+            <div class="game-card">
+                <h3>Oyun 3</h3>
+                <p>Zekanı ve stratejini göster!</p>
+                <button class="game-btn">Oyna</button>
             </div>
-        </div>
-
-        <hr style="border: 1px solid #333; margin: 60px 0;">
-
-        <div id="hakkimizda" style="text-align: center;">
-            <h2>Hakkımızda</h2>
-            <p>Bu site Kral Ayhan tarafından en eğlenceli oyunları listelemek için geliştirilmiştir.</p>
-        </div>
-
-        <hr style="border: 1px solid #333; margin: 60px 0;">
-
-        <div id="admin-bolumu">
-            <h2 style="text-align: center; color: #4cd137;">Sistem Yönetimi</h2>
-            
-            <div id="login-form" class="admin-kutusu">
-                <h3>Yönetici Girişi</h3>
-                <p style="color: #aaa; font-size: 14px;">Lütfen erişim anahtarını giriniz:</p>
-                <input type="password" id="password-input" placeholder="Şifreniz...">
-                <button class="admin-btn" onclick="panelKontrolEt()">Sisteme Giriş Yap</button>
-                <p id="hata-yazisi" class="hata-mesaji">Kral, şifreyi yanlış girdin! ❌</p>
+            <div class="game-card">
+                <h3>Oyun 4</h3>
+                <p>Karanlık labirentlerden kurtul!</p>
+                <button class="game-btn">Oyna</button>
             </div>
-
-            <div id="admin-icerik" class="gizli-icerik">
-                <h2 style="color: #4cd137;">👑 Hoş Geldin, Kral Ayhan!</h2>
-                <p>Admin paneline başarıyla giriş yaptın. Buradan sitene yeni oyunlar ekleyebilir, ayarları yönetebilirsin.</p>
-                <div style="background: #1e222b; padding: 15px; border-radius: 5px; margin-top: 15px;">
-                    <h4>Hızlı İstatistikler:</h4>
-                    <p>🕹️ Toplam Oyun: 3</p>
-                    <p>👥 Günlük Ziyaretçi: 1</p>
-                </div>
+            <div class="game-card">
+                <h3>Oyun 5</h3>
+                <p>Siber dünyada savaşa katıl!</p>
+                <button class="game-btn">Oyna</button>
             </div>
         </div>
     </div>
 
-    <script>
-        function panelKontrolEt() {
-            var girilenSifre = document.getElementById("password-input").value;
-            
-            if (girilenSifre === "Kral Ayhan 123") {
-                // Şifre doğruysa: Giriş kutusunu gizle, admin panelini aç
-                document.getElementById("login-form").style.display = "none";
-                document.getElementById("admin-icerik").style.display = "block";
-            } else {
-                // Şifre yanlışsa: Hata mesajını göster
-                document.getElementById("hata-yazisi").style.display = "block";
-            }
-        }
-    </script>
+    <footer style="padding: 40px; text-align: center; color: #555;">
+        &copy; 2026 Oyun Sitem - Tüm Hakları Saklıdır.
+    </footer>
 
 </body>
 </html>
