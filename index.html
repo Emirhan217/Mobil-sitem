@@ -5,18 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Oyun Sitem</title>
     <style>
-        /* GENEL SİTE STİLLERİ */
+        /* SİTE GENEL AYARLARI */
         body, html {
             margin: 0;
             padding: 0;
             font-family: 'Segoe UI', sans-serif;
-            background-color: #000;
+            background-color: #050505;
             color: #fff;
             scroll-behavior: smooth;
             overflow-x: hidden;
         }
 
-        /* --- 3 AŞAMALI GİRİŞ ANİMASYONU --- */
+        /* 1. PORTAL VE TEŞEKKÜR ANİMASYON EKRANI */
         #intro-container {
             position: fixed;
             top: 0;
@@ -31,76 +31,68 @@
             flex-direction: column;
         }
 
-        /* 1. Aşama: Portal */
         .portal {
-            width: 150px;
-            height: 150px;
+            width: 160px;
+            height: 160px;
             border-radius: 50%;
             background: radial-gradient(circle, #39ff14, #bc13fe, transparent);
             box-shadow: 0 0 40px #bc13fe, 0 0 80px #39ff14;
             animation: rotatePortal 2s linear infinite, pulsePortal 1.5s ease-in-out infinite alternate;
-            display: block;
         }
 
         @keyframes rotatePortal {
             100% { transform: rotate(360deg); }
         }
         @keyframes pulsePortal {
-            0% { transform: scale(0.9); box-shadow: 0 0 30px #bc13fe; }
-            100% { transform: scale(1.1); box-shadow: 0 0 60px #39ff14; }
+            0% { transform: scale(0.9); }
+            100% { transform: scale(1.1); }
         }
 
-        /* 2. Aşama: Karakterler */
         .karakterler-alani {
             display: none;
             position: relative;
             width: 300px;
-            height: 200px;
-            text-align: center;
+            height: 150px;
         }
         .karakter {
-            font-size: 50px;
+            font-size: 60px;
             position: absolute;
             bottom: 0;
             animation: pullIntoPortal 1.5s forwards ease-in;
         }
-        /* Satranç Şahı, Tenisçi ve Tıklama Canavarı portala doğru çekiliyor */
         #char1 { left: 20px; animation-delay: 0.2s; }
         #char2 { left: 120px; animation-delay: 0.5s; }
         #char3 { right: 20px; animation-delay: 0.8s; }
 
         @keyframes pullIntoPortal {
             0% { transform: scale(1) translateY(0); opacity: 1; }
-            100% { transform: scale(0) translateY(-100px); opacity: 0; filter: blur(5px); }
+            100% { transform: scale(0) translateY(-120px); opacity: 0; filter: blur(5px); }
         }
 
-        /* 3. Aşama: Teşekkür Yazısı */
         #tekkur-yazisi {
             display: none;
-            font-size: 26px;
+            font-size: 28px;
             color: #39ff14;
             text-shadow: 0 0 15px #39ff14;
             text-align: center;
             padding: 20px;
-            max-width: 600px;
-            animation: fadeInOut 2.5s forwards;
+            max-width: 650px;
+            animation: fadeIn 1.5s forwards;
         }
 
-        @keyframes fadeInOut {
-            0% { opacity: 0; transform: scale(0.9); }
-            20% { opacity: 1; transform: scale(1); }
-            80% { opacity: 1; }
-            100% { opacity: 0; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
         }
 
-        /* ARKA PLAN VİDEO EFEKTİ */
+        /* 2. VİDEO EFEKTLİ ANA EKRAN */
         .hero {
             height: 100vh;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            background: linear-gradient(45deg, #000, #130026, #000);
+            background: linear-gradient(45deg, #050505, #140029, #050505);
             background-size: 400% 400%;
             animation: videoBackground 12s ease infinite;
             text-align: center;
@@ -113,11 +105,11 @@
         }
 
         .hero h1 {
-            font-size: 75px;
+            font-size: 80px;
             margin: 0;
             color: #bc13fe;
-            text-shadow: 0 0 20px #bc13fe;
-            letter-spacing: 4px;
+            text-shadow: 0 0 25px #bc13fe;
+            letter-spacing: 5px;
         }
 
         .explore-btn {
@@ -140,7 +132,7 @@
             box-shadow: 0 0 30px #39ff14;
         }
 
-        /* YENİ OYUNLAR BÖLÜMÜ (3 ADET) */
+        /* 3. OYUN LİSTESİ VE LOGOLAR */
         .container {
             padding: 80px 20px;
             text-align: center;
@@ -150,49 +142,118 @@
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 30px;
+            gap: 40px;
             margin-top: 40px;
         }
 
         .game-card {
             background: #111;
-            border: 1px solid #bc13fe;
-            border-radius: 15px;
+            border: 2px solid #bc13fe;
+            border-radius: 20px;
             padding: 30px;
-            width: 250px;
+            width: 260px;
             transition: 0.4s;
-            box-shadow: 0 0 10px #bc13fe33;
+            box-shadow: 0 0 15px rgba(188, 19, 254, 0.2);
         }
 
         .game-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 0 25px #39ff14;
+            transform: translateY(-15px);
+            box-shadow: 0 0 30px #39ff14;
             border-color: #39ff14;
         }
 
+        /* Oyun Logoları (Neon Daire Tasarım) */
+        .game-logo {
+            width: 100px;
+            height: 100px;
+            background: #222;
+            border-radius: 50%;
+            margin: 0 auto 20px auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 50px;
+            border: 2px solid #bc13fe;
+            box-shadow: 0 0 10px #bc13fe;
+            transition: 0.3s;
+        }
+
+        .game-card:hover .game-logo {
+            border-color: #39ff14;
+            box-shadow: 0 0 20px #39ff14;
+            background: #000;
+        }
+
         .game-card h3 {
-            color: #39ff14;
-            font-size: 24px;
-            margin-top: 0;
+            color: #fff;
+            font-size: 26px;
+            margin: 10px 0;
         }
 
         .game-btn {
             background: #bc13fe;
             color: #fff;
             border: none;
-            padding: 12px 25px;
-            border-radius: 5px;
+            padding: 12px 30px;
+            border-radius: 8px;
             cursor: pointer;
             margin-top: 20px;
             font-weight: bold;
+            font-size: 16px;
             transition: 0.3s;
         }
 
         .game-btn:hover {
             background: #39ff14;
             color: #000;
-            box-shadow: 0 0 15px #39ff14;
+            box-shadow: 0 0 20px #39ff14;
         }
+
+        /* 4. OYUN PENCERELERİ (POPUP) */
+        .game-popup {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 20px; right: 30px;
+            font-size: 40px; color: #ff4757; cursor: pointer;
+        }
+
+        /* Tenis Sahası */
+        canvas#pongCanvas {
+            border: 3px solid #39ff14;
+            background: #000;
+            box-shadow: 0 0 20px #39ff14;
+        }
+
+        /* Renkli Tıklama Kutusu */
+        #click-box {
+            width: 300px; height: 300px;
+            border: 4px solid #bc13fe;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 32px; font-weight: bold; cursor: pointer;
+            border-radius: 15px; box-shadow: 0 0 20px #bc13fe;
+        }
+
+        /* Satranç Tahtası Görsel Alanı */
+        #chess-board {
+            display: grid;
+            grid-template-columns: repeat(8, 55px);
+            grid-template-rows: repeat(8, 55px);
+            border: 5px solid #bc13fe;
+            box-shadow: 0 0 20px #bc13fe;
+        }
+        .square { width: 55px; height: 55px; display: flex; align-items: center; justify-content: center; font-size: 35px; }
+        .white { background-color: #eee; color: #000; }
+        .black { background-color: #444; color: #fff; }
     </style>
 </head>
 <body>
@@ -201,7 +262,10 @@
         <div id="portal-element" class="portal"></div>
         
         <div id="characters-element" class="karakterler-alani">
-            <span class="karakter" id="char1">👑</span> <span class="karakter" id="char2">🎾</span> <span class="karakter" id="char3">👾</span> </div>
+            <span class="karakter" id="char1">👑</span>
+            <span class="karakter" id="char2">🎾</span>
+            <span class="karakter" id="char3">🎯</span>
+        </div>
 
         <div id="tekkur-yazisi">
             Ayhan abime siteyi yaptığımda bana destek olduğu için teşekkür ederim ❤️
@@ -210,64 +274,173 @@
 
     <section class="hero">
         <h1>Oyun Sitem</h1>
-        <p style="color: #39ff14; font-size: 20px;">Geleceğin Oyun Dünyası Burada</p>
+        <p style="color: #39ff14; font-size: 22px; letter-spacing: 2px;">Geleceğin Oyun Dünyası</p>
         <a href="#oyunlar" class="explore-btn">Oyunları Keşfet</a>
     </section>
 
     <div class="container" id="oyunlar">
-        <h2 style="font-size: 40px; color: #bc13fe; text-shadow: 0 0 10px #bc13fe;">Popüler Oyunlar</h2>
+        <h2 style="font-size: 45px; color: #bc13fe; text-shadow: 0 0 15px #bc13fe; margin-bottom: 50px;">Oyunlar</h2>
         
         <div class="games-grid">
             <div class="game-card">
+                <div class="game-logo">👑</div>
                 <h3>Satranç</h3>
-                <p>Zekanı konuştur, hamleni yap ve rakip şahı mat et!</p>
-                <button class="game-btn">Oyna</button>
+                <p>Zekanı konuştur, hamleni yap ve rakibini mat et!</p>
+                <button class="game-btn" onclick="openGame('chess')">Oyna</button>
             </div>
+
             <div class="game-card">
+                <div class="game-logo">🎾</div>
                 <h3>Tenis</h3>
-                <p>Hızlı reflekslerle topu yakala, kortların kralı ol!</p>
-                <button class="game-btn">Oyna</button>
+                <p>Hızlı reflekslerle topu yakala, kortun hakimi ol!</p>
+                <button class="game-btn" onclick="openGame('tennis')">Oyna</button>
             </div>
+
             <div class="game-card">
+                <div class="game-logo">🎯</div>
                 <h3>Renkli Tıklama</h3>
-                <p>Ekranda beliren doğru renklere en hızlı şekilde tıkla, rekor kır!</p>
-                <button class="game-btn">Oyna</button>
+                <p>Doğru renge en hızlı sürede tıkla, kendi rekorunu kır!</p>
+                <button class="game-btn" onclick="openGame('click')">Oyna</button>
             </div>
         </div>
     </div>
 
-    <footer style="padding: 40px; text-align: center; color: #444;">
-        &copy; 2026 Oyun Sitem - Tüm Hakları Saklıdır.
-    </footer>
+    <div id="popup-chess" class="game-popup">
+        <span class="close-btn" onclick="closeGame('chess')">&times;</span>
+        <h2 style="color: #bc13fe; margin-bottom: 20px;">Satranç Tahtası</h2>
+        <div id="chess-board"></div>
+    </div>
+
+    <div id="popup-tennis" class="game-popup">
+        <span class="close-btn" onclick="closeGame('tennis')">&times;</span>
+        <h2 style="color: #39ff14; margin-bottom: 20px;">Tenis (Pong) Oyun Alanı</h2>
+        <canvas id="pongCanvas" width="700" height="400"></canvas>
+    </div>
+
+    <div id="popup-click" class="game-popup">
+        <span class="close-btn" onclick="closeGame('click')">&times;</span>
+        <h2 style="color: #00f2ff; margin-bottom: 20px;">Hız Testi</h2>
+        <div id="click-box" onclick="handleClickBox()">TIKLA BAŞLA</div>
+        <p id="click-score" style="font-size: 24px; margin-top: 20px; color: #39ff14;"></p>
+    </div>
 
     <script>
-        const portal = document.getElementById('portal-element');
-        const characters = document.getElementById('characters-element');
-        const thanksText = document.getElementById('tekkur-yazisi');
-        const introContainer = document.getElementById('intro-container');
-
-        // Saniyelerle sahneleri yönetiyoruz
+        // --- GİRİŞ ANİMASYONU SÜRELERİ ---
         setTimeout(() => {
-            // Portal küçülürken karakterler sahneye çıkıp içeri çekiliyor
-            portal.style.transform = 'scale(0.5)';
-            characters.style.display = 'block';
+            document.getElementById('portal-element').style.transform = 'scale(0.4)';
+            document.getElementById('characters-element').style.display = 'block';
         }, 1500);
 
         setTimeout(() => {
-            // Portal ve karakterler kayboluyor, Teşekkür mesajı geliyor
-            portal.style.display = 'none';
-            characters.style.display = 'none';
-            thanksText.style.display = 'block';
+            document.getElementById('portal-element').style.display = 'none';
+            document.getElementById('characters-element').style.display = 'none';
+            document.getElementById('tekkur-yazisi').style.display = 'block';
         }, 3200);
 
         setTimeout(() => {
-            // Tüm animasyon bitiyor ve site ana ekranı açılıyor
-            introContainer.style.animation = 'fadeOut 0.5s forwards';
+            document.getElementById('intro-container').style.transition = 'opacity 0.8s';
+            document.getElementById('intro-container').style.opacity = '0';
             setTimeout(() => {
-                introContainer.style.display = 'none';
-            }, 500);
-        }, 5700);
-    </script>
+                document.getElementById('intro-container').style.display = 'none';
+            }, 800);
+        }, 6000);
 
+        // --- PENCERE AÇMA / KAPATMA ---
+        function openGame(gameName) {
+            document.getElementById('popup-' + gameName).style.display = 'flex';
+            if(gameName === 'chess') buildChessBoard();
+            if(gameName === 'tennis') startTennisGame();
+        }
+
+        function closeGame(gameName) {
+            document.getElementById('popup-' + gameName).style.display = 'none';
+        }
+
+        // --- SATRANÇ TAHTASI OLUŞTURUCU ---
+        function buildChessBoard() {
+            const board = document.getElementById('chess-board');
+            board.innerHTML = '';
+            const pieces = {
+                0: '♜', 1: '♞', 2: '♝', 3: '♛', 4: '♚', 5: '♝', 6: '♞', 7: '♜',
+                56: '♖', 57: '♘', 58: '♗', 59: '♕', 60: '♔', 61: '♗', 62: '♘', 63: '♖'
+            };
+            for (let i = 0; i < 64; i++) {
+                const sq = document.createElement('div');
+                sq.className = `square ${(Math.floor(i / 8) + i % 8) % 2 === 0 ? 'white' : 'black'}`;
+                if (pieces[i]) sq.textContent = pieces[i];
+                else if (i >= 8 && i <= 15) sq.textContent = '♟';
+                else if (i >= 48 && i <= 55) sq.textContent = '♙';
+                board.appendChild(sq);
+            }
+        }
+
+        // --- TENİS (PONG) OYUN MOTORU ---
+        let pongInterval;
+        function startTennisGame() {
+            const canvas = document.getElementById('pongCanvas');
+            const ctx = canvas.getContext('2d');
+            let ballX = 350, ballY = 200, speedX = 4, speedY = 4;
+            let paddleY = 150, paddleHeight = 90;
+
+            canvas.onmousemove = (e) => {
+                let rect = canvas.getBoundingClientRect();
+                paddleY = e.clientY - rect.top - paddleHeight / 2;
+            };
+
+            clearInterval(pongInterval);
+            pongInterval = setInterval(() => {
+                if(document.getElementById('popup-tennis').style.display !== 'flex') {
+                    clearInterval(pongInterval);
+                    return;
+                }
+                ctx.fillStyle = '#000'; ctx.fillRect(0, 0, 700, 400); // Ekran temizleme
+                
+                // Topu çizme
+                ctx.fillStyle = '#39ff14'; ctx.beginPath(); ctx.arc(ballX, ballY, 10, 0, Math.PI*2); ctx.fill();
+                
+                // Oyuncu Raketi
+                ctx.fillRect(15, paddleY, 15, paddleHeight);
+
+                ballX += speedX; ballY += speedY;
+                if(ballY < 10 || ballY > 390) speedY = -speedY;
+                if(ballX > 690) speedX = -speedX;
+                
+                // Rakete Çarpma Kontrolü
+                if(ballX < 35 && ballY > paddleY && ballY < paddleY + paddleHeight) {
+                    speedX = -speedX;
+                } else if(ballX < 0) {
+                    ballX = 350; ballY = 200; speedX = -speedX; // Yandın, baştan başla
+                }
+            }, 1000/60);
+        }
+
+        // --- RENKLİ TIKLAMA OYUNU ---
+        let reflexTime = 0, isWaiting = false;
+        function handleClickBox() {
+            const box = document.getElementById('click-box');
+            const scoreText = document.getElementById('click-score');
+            
+            if(!isWaiting) {
+                box.textContent = 'BEKLE...';
+                box.style.backgroundColor = 'red';
+                isWaiting = true;
+                scoreText.textContent = '';
+                
+                setTimeout(() => {
+                    box.style.backgroundColor = '#39ff14';
+                    box.style.color = '#000';
+                    box.textContent = 'TIKLA!';
+                    reflexTime = Date.now();
+                }, 1500 + Math.random() * 2500);
+            } else if(reflexTime > 0) {
+                let sonuclar = Date.now() - reflexTime;
+                scoreText.textContent = `Hız Skorun: ${sonuclar} ms`;
+                box.textContent = 'YENİDEN BAŞLA';
+                box.style.backgroundColor = 'transparent';
+                box.style.color = '#fff';
+                reflexTime = 0; isWaiting = false;
+            }
+        }
+    </script>
 </body>
 </html>
