@@ -54,6 +54,7 @@
         nav a {
             color: #fff; text-decoration: none; font-weight: bold; font-size: 18px;
             letter-spacing: 1px; transition: 0.3s; text-transform: uppercase;
+            display: flex; align-items: center; gap: 5px;
         }
         nav a:hover { color: #39ff14; text-shadow: 0 0 10px #39ff14; }
 
@@ -157,7 +158,7 @@
 
     <nav>
         <a href="#oyunlar">Ana Ekran</a>
-        <a href="#magaza">Oyun Mağazası</a>
+        <a href="#magaza">🛒 Mağazaya Git</a>
     </nav>
 
     <div id="intro-container">
@@ -188,7 +189,7 @@
 
     <div class="container" id="magaza" style="background: rgba(10, 5, 20, 0.6); border-top: 2px solid #00f2ff;">
         <h2 style="background: linear-gradient(to right, #00f2ff, #bc13fe); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Oyun Mağazası</h2>
-        <p style="color: #00f2ff; font-size: 18px; margin-bottom: 40px;">Yükle butonuna basarak oyunu hem telefonuna dosya olarak indir, hem de ana ekrana ekle!</p>
+        <p style="color: #00f2ff; font-size: 18px; margin-bottom: 40px;">Söyleyeceğin yeni oyunlar buraya eklenecek ve yüklendiğinde hem telefona inecek hem yukarı eklenecek!</p>
         <div class="games-grid" id="store-games-area">
             </div>
     </div>
@@ -200,8 +201,8 @@
     <div id="popup-snake" class="game-popup"><span class="close-btn" onclick="closeGame('snake')">&times;</span><h2 style="color: #ff9f43; margin-bottom: 10px; font-size: 32px;">Yılan Oyunu</h2><div style="font-size: 22px; margin-bottom: 15px;">Skor: <span id="sScore">0</span></div><canvas id="snakeCanvas" width="400" height="400"></canvas></div>
 
     <script>
-        // --- MAĞAZA VE OYUN VERİLERİ ---
-        const TÜM_OYUNLAR = {
+        // --- SABİT (SİTEDE DURAN) OYUNLAR ---
+        const SABIT_OYUNLAR = {
             chess: { id: 'chess', logo: '👑', title: 'Satranç', desc: 'Gelişmiş taş seçme ve yeme mekanizmalı, tamamen düzeltilmiş kararlı satranç.' },
             tennis: { id: 'tennis', logo: '🎾', title: 'Tenis', desc: 'Yapay zekaya sahip gelişmiş bota karşı reflekslerini yarıştır.' },
             click: { id: 'click', logo: '🎯', title: 'Renkli Tıklama', desc: 'Doğru renge en hızlı sürede tıkla ve kendi milisaniye rekorunu kır.' },
@@ -209,18 +210,35 @@
             snake: { id: 'snake', logo: '🐍', title: 'Yılan Oyunu', desc: 'Yemleri topla, kendine veya duvarlara çarpmadan en uzun boya ulaş.' }
         };
 
-        let yukluOyunlar = JSON.parse(localStorage.getItem('yukluOyunlar')) || [];
+        // --- MAĞAZAYA EKLENECEK OYUNLAR (SEN SÖYLEDİKÇE BURAYI DOLDURACAĞIZ) ---
+        const MAĞAZA_OYUNLARI = {
+            // Örnek şablon: sen söyledikçe buraya oyunları tanımlayacağız.
+        };
+
+        // Mağazadan indirilen ve sonradan ana ekrana eklenen oyunların hafıza takibi
+        let magazadanYuklenenler = JSON.parse(localStorage.getItem('magazadanYuklenenler')) || [];
 
         function updateUIVisuals() {
             const mainArea = document.getElementById('main-games-area');
             const storeArea = document.getElementById('store-games-area');
             
-            mainArea.innerHTML = yukluOyunlar.length === 0 
-                ? `<p style="color: #ff4757; font-size: 20px; grid-column: 1/-1;">Henüz hiçbir oyun yüklemediniz! Aşağıdaki Mağaza bölümünden oyun yükleyebilirsiniz.</p>` 
-                : '';
+            mainArea.innerHTML = '';
             
-            yukluOyunlar.forEach(gameId => {
-                const game = TÜM_OYUNLAR[gameId];
+            // Önce sitenin kendi orijinal sabit oyunlarını listeliyoruz (Sadece "Oyna" butonu var)
+            Object.keys(SABIT_OYUNLAR).forEach(gameId => {
+                const game = SABIT_OYUNLAR[gameId];
+                mainArea.innerHTML += `
+                    <div class="game-card">
+                        <div class="game-logo">${game.logo}</div>
+                        <h3>${game.title}</h3>
+                        <p>${game.desc}</p>
+                        <button class="game-btn" onclick="openGame('${game.id}')">Oyna</button>
+                    </div>`;
+            });
+
+            // Sonra mağazadan sonradan yüklenen yeni oyunları ekliyoruz
+            magazadanYuklenenler.forEach(gameId => {
+                const game = MAĞAZA_OYUNLARI[gameId];
                 if(game) {
                     mainArea.innerHTML += `
                         <div class="game-card">
@@ -232,100 +250,43 @@
                 }
             });
 
+            // Mağaza alanını çiziyoruz
             storeArea.innerHTML = '';
-            Object.keys(TÜM_OYUNLAR).forEach(gameId => {
-                const game = TÜM_OYUNLAR[gameId];
-                const isInstalled = yukluOyunlar.includes(gameId);
-                storeArea.innerHTML += `
-                    <div class="game-card" style="border-color: #00f2ff;">
-                        <div class="game-logo" style="border-color: #00f2ff; box-shadow: 0 0 10px rgba(0,242,255,0.3);">${game.logo}</div>
-                        <h3>${game.title}</h3>
-                        <p>${game.desc}</p>
-                        <button class="store-btn" id="btn-${game.id}" ${isInstalled ? 'disabled' : ''} onclick="installAndDownload('${gameId}')">
-                            ${isInstalled ? 'Yüklendi' : 'Yükle'}
-                        </button>
-                    </div>`;
-            });
-        }
-
-        // Hem ana ekrana kuran hem de telefonu tetikleyip direkt indiren ana fonksiyon
-        function installAndDownload(gameId) {
-            if(!yukluOyunlar.includes(gameId)) {
-                yukluOyunlar.push(gameId);
-                localStorage.setItem('yukluOyunlar', JSON.stringify(yukluOyunlar));
-                updateUIVisuals();
-                downloadGameStandalone(gameId); // Telefon indirme sistemini tetikler
-            }
-        }
-
-        // TELEFONA DIREKT DOSYA INDIRME MOTORU
-        function downloadGameStandalone(gameId) {
-            const game = TÜM_OYUNLAR[gameId];
-            let gameScript = "";
-            let gameHTML = "";
-
-            if(gameId === 'chess') {
-                gameHTML = `<h2 style="color:#bc13fe;text-align:center;">Satranç</h2><div id="chess-board" style="display:grid;grid-template-columns:repeat(8,55px);grid-template-rows:repeat(8,55px);margin:20px auto;width:440px;border:5px solid #bc13fe;"></div>`;
-                gameScript = `
-                    let boardState = [['♜','♞','♝','♛','♚','♝','♞','♜'],['♟','♟','♟','♟','♟','♟','♟','♟'],['','','','','','','',''],['','','','','','','',''],['','','','','','','',''],['','','','','','','',''],['♙','♙','♙','♙','♙','♙','♙','♙'],['♖','♘','♗','♕','♔','♗','♘','♖']];
-                    let selectedSquare = null;
-                    function drawGrid() {
-                        const board = document.getElementById('chess-board'); board.innerHTML = '';
-                        for(let r=0; r<8; r++) {
-                            for(let c=0; c<8; c++) {
-                                const sq = document.createElement('div');
-                                sq.style.width = '55px'; sq.style.height = '55px'; sq.style.display = 'flex'; sq.style.alignItems = 'center'; sq.style.justifyContent = 'center'; sq.style.fontSize = '38px'; sq.style.cursor = 'pointer';
-                                sq.style.backgroundColor = (r+c)%2===0 ? '#f0d9b5' : '#b58863';
-                                sq.textContent = boardState[r][c];
-                                if(selectedSquare && selectedSquare.r === r && selectedSquare.c === c) sq.style.backgroundColor = '#39ff14';
-                                sq.onclick = () => {
-                                    if (selectedSquare === null) {
-                                        if (boardState[r][c] !== '') { selectedSquare = {r, c}; drawGrid(); }
-                                    } else {
-                                        if(selectedSquare.r === r && selectedSquare.c === c) { selectedSquare = null; drawGrid(); return; }
-                                        boardState[r][c] = boardState[selectedSquare.r][selectedSquare.c]; boardState[selectedSquare.r][selectedSquare.c] = ''; selectedSquare = null; drawGrid();
-                                    }
-                                };
-                                board.appendChild(sq);
-                            }
-                        }
-                    } drawGrid();`;
-            } else if(gameId === 'tennis') {
-                gameHTML = `<h2 style="color:#39ff14;text-align:center;">Tenis</h2><canvas id="pongCanvas" width="700" height="400" style="display:block;margin:0 auto;border:3px solid #39ff14;background:#000;"></canvas>`;
-                gameScript = `
-                    const canvas = document.getElementById('pongCanvas'); const ctx = canvas.getContext('2d');
-                    let ballX = 350, ballY = 200, speedX = 5, speedY = 5, pY = 150, bY = 150, pHeight = 90, bHeight = 90;
-                    canvas.onmousemove = (e) => { let rect = canvas.getBoundingClientRect(); pY = e.clientY - rect.top - pHeight / 2; };
-                    canvas.ontouchmove = (e) => { let rect = canvas.getBoundingClientRect(); pY = e.touches[0].clientY - rect.top - pHeight / 2; e.preventDefault(); };
-                    setInterval(() => {
-                        ctx.fillStyle = '#000'; ctx.fillRect(0, 0, 700, 400);
-                        ctx.fillStyle = '#39ff14'; ctx.beginPath(); ctx.arc(ballX, ballY, 10, 0, Math.PI*2); ctx.fill(); ctx.fillRect(15, pY, 15, pHeight);
-                        ctx.fillStyle = '#ff4757'; ctx.fillRect(670, bY, 15, bHeight);
-                        if(bY + bHeight/2 < ballY - 15) bY += 4.2; else if(bY + bHeight/2 > ballY + 15) bY -= 4.2;
-                        ballX += speedX; ballY += speedY;
-                        if(ballY < 10 || ballY > 390) speedY = -speedY;
-                        if(ballX < 35 && ballY > pY && ballY < pY + pHeight) speedX = -speedX;
-                        if(ballX > 655 && ballY > bY && ballY < bY + bHeight) speedX = -speedX;
-                        if(ballX < 0 || ballX > 700) { ballX = 350; ballY = 200; speedX = -speedX; }
-                    }, 1000/60);`;
+            if(Object.keys(MAĞAZA_OYUNLARI).length === 0) {
+                storeArea.innerHTML = `<p style="color: #00f2ff; font-size: 18px; grid-column: 1/-1;">Şu an mağaza boş. Bana yüklemek istediğin oyunu söyle, hemen buraya ekleyelim!</p>`;
             } else {
-                gameHTML = `<h2 style="text-align:center;">${game.title}</h2><canvas id="snakeCanvas" width="400" height="400" style="display:block;margin:0 auto;border:3px solid #ff9f43;background:#0d0d13;"></canvas>`;
-                gameScript = `
-                    const canvas = document.getElementById('snakeCanvas'); const ctx = canvas.getContext('2d');
-                    let boxSize = 20; let snake = [{x: 200, y: 200}]; let food = {x: 100, y: 100}; let dx = boxSize, dy = 0;
-                    document.onkeydown = (e) => {
-                        if (e.key === 'ArrowLeft' && dx === 0) { dx = -boxSize; dy = 0; } else if (e.key === 'ArrowUp' && dy === 0) { dx = 0; dy = -boxSize; } else if (e.key === 'ArrowRight' && dx === 0) { dx = boxSize; dy = 0; } else if (e.key === 'ArrowDown' && dy === 0) { dx = 0; dy = boxSize; }
-                    };
-                    setInterval(() => {
-                        let head = {x: snake[0].x + dx, y: snake[0].y + dy};
-                        if(head.x < 0 || head.x >= 400 || head.y < 0 || head.y >= 400) { snake = [{x:200,y:200}]; dx=boxSize; dy=0; return; }
-                        snake.unshift(head);
-                        if(head.x === food.x && head.y === food.y) { food = { x: Math.floor(Math.random() * 20) * boxSize, y: Math.floor(Math.random() * 20) * boxSize }; } else { snake.pop(); }
-                        ctx.fillStyle = '#0d0d13'; ctx.fillRect(0, 0, 400, 400);
-                        ctx.fillStyle = '#ff9f43'; snake.forEach(s => ctx.fillRect(s.x, s.y, boxSize-2, boxSize-2));
-                        ctx.fillStyle = '#ff4757'; ctx.fillRect(food.x, food.y, boxSize-2, boxSize-2);
-                    }, 150);`;
+                Object.keys(MAĞAZA_OYUNLARI).forEach(gameId => {
+                    const game = MAĞAZA_OYUNLARI[gameId];
+                    const isInstalled = magazadanYuklenenler.includes(gameId);
+                    storeArea.innerHTML += `
+                        <div class="game-card" style="border-color: #00f2ff;">
+                            <div class="game-logo" style="border-color: #00f2ff; box-shadow: 0 0 10px rgba(0,242,255,0.3);">${game.logo}</div>
+                            <h3>${game.title}</h3>
+                            <p>${game.desc}</p>
+                            <button class="store-btn" id="btn-${game.id}" ${isInstalled ? 'disabled' : ''} onclick="installAndDownload('${gameId}')">
+                                ${isInstalled ? 'Yüklendi' : 'Yükle'}
+                            </button>
+                        </div>`;
+                });
             }
+        }
+
+        function installAndDownload(gameId) {
+            if(!magazadanYuklenenler.includes(gameId)) {
+                magazadanYuklenenler.push(gameId);
+                localStorage.setItem('magazadanYuklenenler', JSON.stringify(magazadanYuklenenler));
+                updateUIVisuals();
+                downloadGameStandalone(gameId); // Telefonuna paketi otomatik indirir
+            }
+        }
+
+        // MAĞAZADAKİ YENİ OYUNLARIN TELEFONA İNDİRİLME MOTORU
+        function downloadGameStandalone(gameId) {
+            const game = MAĞAZA_OYUNLARI[gameId];
+            if(!game) return;
+            
+            let gameHTML = `<h2 style="text-align:center;">${game.title}</h2><p style="text-align:center;color:#aaa;">Mağazadan başarıyla telefonunuza yüklendi!</p>`;
+            let gameScript = `console.log('${game.title} çalışıyor...');`;
 
             const standaloneContent = `<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>${game.title}</title><style>body { background-color: #05050a; color: white; font-family: sans-serif; padding: 20px; margin: 0; }</style></head><body>${gameHTML}<script>${gameScript}<\/script></body></html>`;
 
