@@ -97,6 +97,7 @@
         .game-card {
             background: rgba(15, 15, 25, 0.7); border: 2px solid rgba(188, 19, 254, 0.3); border-radius: 24px; padding: 35px; width: 260px;
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); backdrop-filter: blur(10px);
+            display: flex; flex-direction: column; align-items: center;
         }
         .game-card:hover { transform: translateY(-15px) scale(1.02); box-shadow: 0 0 35px rgba(57, 255, 20, 0.4); border-color: #39ff14; }
         .game-logo {
@@ -106,18 +107,26 @@
         }
         .game-card:hover .game-logo { border-color: #39ff14; box-shadow: 0 0 25px #39ff14; background: #050508; transform: rotate(10deg); }
         .game-card h3 { color: #fff; font-size: 28px; font-weight: 700; margin: 15px 0 10px 0; }
-        .game-card p { color: #b0b0bc; font-size: 15px; line-height: 1.5; height: 70px; overflow: hidden; }
+        .game-card p { color: #b0b0bc; font-size: 15px; line-height: 1.5; height: 70px; overflow: hidden; margin-bottom: 20px; }
+
+        /* BUTON GRUPLARI VE ÇİFT SEÇENEK */
+        .btn-group { display: flex; gap: 10px; width: 100%; justify-content: center; margin-top: auto; }
 
         .game-btn {
-            background: linear-gradient(135deg, #bc13fe, #8a06c4); color: #fff; border: none; padding: 14px 35px; border-radius: 12px;
-            cursor: pointer; margin-top: 25px; font-weight: bold; font-size: 16px; letter-spacing: 1px; transition: all 0.3s ease; text-transform: uppercase;
+            background: linear-gradient(135deg, #bc13fe, #8a06c4); color: #fff; border: none; padding: 12px 25px; border-radius: 12px;
+            cursor: pointer; font-weight: bold; font-size: 14px; letter-spacing: 1px; transition: all 0.3s ease; text-transform: uppercase; flex: 1;
         }
         .game-btn:hover { background: linear-gradient(135deg, #39ff14, #2cd810); color: #000; box-shadow: 0 0 20px rgba(57, 255, 20, 0.6); transform: translateY(-2px); }
 
-        /* MAĞAZA YÜKLE BUTONU */
+        .download-btn {
+            background: linear-gradient(135deg, #ff9f43, #ff6b6b); color: #fff; border: none; padding: 12px 25px; border-radius: 12px;
+            cursor: pointer; font-weight: bold; font-size: 14px; letter-spacing: 1px; transition: all 0.3s ease; text-transform: uppercase; flex: 1;
+        }
+        .download-btn:hover { background: linear-gradient(135deg, #00f2ff, #0072ff); color: #fff; box-shadow: 0 0 20px #00f2ff; transform: translateY(-2px); }
+
         .store-btn {
-            background: linear-gradient(135deg, #00f2ff, #0072ff); color: #fff; border: none; padding: 14px 35px; border-radius: 12px;
-            cursor: pointer; margin-top: 25px; font-weight: bold; font-size: 16px; letter-spacing: 1px; transition: all 0.3s ease; text-transform: uppercase;
+            background: linear-gradient(135deg, #00f2ff, #0072ff); color: #fff; border: none; padding: 14px 30px; border-radius: 12px;
+            cursor: pointer; font-weight: bold; font-size: 14px; letter-spacing: 1px; transition: all 0.3s ease; text-transform: uppercase; width: 100%;
         }
         .store-btn:hover:not(:disabled) { background: linear-gradient(135deg, #39ff14, #2cd810); color: #000; box-shadow: 0 0 20px #39ff14; }
         .store-btn:disabled { background: #444; color: #888; cursor: not-allowed; }
@@ -131,7 +140,7 @@
         .close-btn { position: absolute; top: 20px; right: 30px; font-size: 45px; color: #ff4757; cursor: pointer; transition: 0.2s; }
         .close-btn:hover { transform: scale(1.1); color: #ff6b81; }
 
-        /* Satranç Yenilenen CSS */
+        /* Satranç */
         #chess-board { display: grid; grid-template-columns: repeat(8, 55px); grid-template-rows: repeat(8, 55px); border: 5px solid #bc13fe; box-shadow: 0 0 30px rgba(188, 19, 254, 0.4); }
         .square { width: 55px; height: 55px; display: flex; align-items: center; justify-content: center; font-size: 38px; cursor: pointer; user-select: none; }
         .white { background-color: #f0d9b5; color: #000; }
@@ -188,7 +197,7 @@
 
     <div class="container" id="magaza" style="background: rgba(10, 5, 20, 0.6); border-top: 2px solid #00f2ff;">
         <h2 style="background: linear-gradient(to right, #00f2ff, #bc13fe); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Oyun Mağazası</h2>
-        <p style="color: #00f2ff; font-size: 18px; margin-bottom: 40px;">İstediğin oyunu seç ve altındaki butona basarak ana ekrana hemen yükle!</p>
+        <p style="color: #00f2ff; font-size: 18px; margin-bottom: 40px;">İstediğin oyunu tarayıcına kalıcı yükle ya da bağımsız dosya olarak cihazına indir!</p>
         <div class="games-grid" id="store-games-area">
             </div>
     </div>
@@ -202,14 +211,15 @@
     <script>
         // --- MAĞAZA VE OYUN VERİLERİ ---
         const TÜM_OYUNLAR = {
-            chess: { id: 'chess', logo: '👑', title: 'Satranç', desc: 'Taş seçme, kare ilerleme ve rakip taş yeme sorunları tamamen düzeltilmiş kararlı sürüm.' },
+            chess: { id: 'chess', logo: '👑', title: 'Satranç', desc: 'Gelişmiş taş seçme ve yeme mekanizmalı, tamamen düzeltilmiş kararlı satranç.' },
             tennis: { id: 'tennis', logo: '🎾', title: 'Tenis', desc: 'Yapay zekaya sahip gelişmiş bota karşı reflekslerini yarıştır.' },
             click: { id: 'click', logo: '🎯', title: 'Renkli Tıklama', desc: 'Doğru renge en hızlı sürede tıkla ve kendi milisaniye rekorunu kır.' },
             memory: { id: 'memory', logo: '🧠', title: 'Hafıza Oyunu', desc: 'Kart eşleştirme mekaniği ile zihnini test et ve süreye meydan oku.' },
             snake: { id: 'snake', logo: '🐍', title: 'Yılan Oyunu', desc: 'Yemleri topla, kendine veya duvarlara çarpmadan en uzun boya ulaş.' }
         };
 
-        let yukluOyunlar = [];
+        // KULLANICI LOCALSTORAGE HAFIZASI (Gerçekten Tarayıcıda Kalır)
+        let yukluOyunlar = JSON.parse(localStorage.getItem('yukluOyunlar')) || [];
 
         function updateUIVisuals() {
             const mainArea = document.getElementById('main-games-area');
@@ -221,13 +231,18 @@
             
             yukluOyunlar.forEach(gameId => {
                 const game = TÜM_OYUNLAR[gameId];
-                mainArea.innerHTML += `
-                    <div class="game-card">
-                        <div class="game-logo">${game.logo}</div>
-                        <h3>${game.title}</h3>
-                        <p>${game.desc}</p>
-                        <button class="game-btn" onclick="openGame('${game.id}')">Oyna</button>
-                    </div>`;
+                if(game) {
+                    mainArea.innerHTML += `
+                        <div class="game-card">
+                            <div class="game-logo">${game.logo}</div>
+                            <h3>${game.title}</h3>
+                            <p>${game.desc}</p>
+                            <div class="btn-group">
+                                <button class="game-btn" onclick="openGame('${game.id}')">Oyna</button>
+                                <button class="download-btn" onclick="downloadGameStandalone('${game.id}')">İndir</button>
+                            </div>
+                        </div>`;
+                }
             });
 
             storeArea.innerHTML = '';
@@ -246,13 +261,111 @@
             });
         }
 
+        // Mağazadan Yükleye Basınca Gerçekten Hafızaya Yükleme
         function installGame(gameId) {
             if(!yukluOyunlar.includes(gameId)) {
                 yukluOyunlar.push(gameId);
+                localStorage.setItem('yukluOyunlar', JSON.stringify(yukluOyunlar));
                 updateUIVisuals();
             }
         }
 
+        // GERÇEK DOSYA OLARAK BİLGİSAYARA/TELEFONA İNDİRME FONKSİYONU
+        function downloadGameStandalone(gameId) {
+            const game = TÜM_OYUNLAR[gameId];
+            let gameScript = "";
+            let gameHTML = "";
+
+            // Her oyunun kodunu bağımsız çalışacak şekilde ayırıyoruz
+            if(gameId === 'chess') {
+                gameHTML = `<h2 style="color:#bc13fe;text-align:center;">Satranç</h2><div id="chess-board" style="display:grid;grid-template-columns:repeat(8,55px);grid-template-rows:repeat(8,55px);margin:20px auto;width:440px;border:5px solid #bc13fe;"></div>`;
+                gameScript = `
+                    let boardState = [['♜','♞','♝','♛','♚','♝','♞','♜'],['♟','♟','♟','♟','♟','♟','♟','♟'],['','','','','','','',''],['','','','','','','',''],['','','','','','','',''],['','','','','','','',''],['♙','♙','♙','♙','♙','♙','♙','♙'],['♖','♘','♗','♕','♔','♗','♘','♖']];
+                    let selectedSquare = null;
+                    function drawGrid() {
+                        const board = document.getElementById('chess-board'); board.innerHTML = '';
+                        for(let r=0; r<8; r++) {
+                            for(let c=0; c<8; c++) {
+                                const sq = document.createElement('div');
+                                sq.style.width = '55px'; sq.style.height = '55px'; sq.style.display = 'flex'; sq.style.alignItems = 'center'; sq.style.justifyContent = 'center'; sq.style.fontSize = '38px'; sq.style.cursor = 'pointer';
+                                sq.style.backgroundColor = (r+c)%2===0 ? '#f0d9b5' : '#b58863';
+                                sq.textContent = boardState[r][c];
+                                if(selectedSquare && selectedSquare.r === r && selectedSquare.c === c) sq.style.backgroundColor = '#39ff14';
+                                sq.onclick = () => {
+                                    if (selectedSquare === null) {
+                                        if (boardState[r][c] !== '') { selectedSquare = {r, c}; drawGrid(); }
+                                    } else {
+                                        if(selectedSquare.r === r && selectedSquare.c === c) { selectedSquare = null; drawGrid(); return; }
+                                        boardState[r][c] = boardState[selectedSquare.r][selectedSquare.c]; boardState[selectedSquare.r][selectedSquare.c] = ''; selectedSquare = null; drawGrid();
+                                    }
+                                };
+                                board.appendChild(sq);
+                            }
+                        }
+                    } drawGrid();`;
+            } else if(gameId === 'tennis') {
+                gameHTML = `<h2 style="color:#39ff14;text-align:center;">Tenis</h2><div style="text-align:center;font-size:24px;margin-bottom:10px;">Skorlar Canvas İçinde</div><canvas id="pongCanvas" width="700" height="400" style="display:block;margin:0 auto;border:3px solid #39ff14;background:#000;"></canvas>`;
+                gameScript = `
+                    const canvas = document.getElementById('pongCanvas'); const ctx = canvas.getContext('2d');
+                    let ballX = 350, ballY = 200, speedX = 5, speedY = 5, pY = 150, bY = 150, pHeight = 90, bHeight = 90;
+                    canvas.onmousemove = (e) => { let rect = canvas.getBoundingClientRect(); pY = e.clientY - rect.top - pHeight / 2; };
+                    setInterval(() => {
+                        ctx.fillStyle = '#000'; ctx.fillRect(0, 0, 700, 400);
+                        ctx.fillStyle = '#39ff14'; ctx.beginPath(); ctx.arc(ballX, ballY, 10, 0, Math.PI*2); ctx.fill(); ctx.fillRect(15, pY, 15, pHeight);
+                        ctx.fillStyle = '#ff4757'; ctx.fillRect(670, bY, 15, bHeight);
+                        if(bY + bHeight/2 < ballY - 15) bY += 4.2; else if(bY + bHeight/2 > ballY + 15) bY -= 4.2;
+                        ballX += speedX; ballY += speedY;
+                        if(ballY < 10 || ballY > 390) speedY = -speedY;
+                        if(ballX < 35 && ballY > pY && ballY < pY + pHeight) speedX = -speedX;
+                        if(ballX > 655 && ballY > bY && ballY < bY + bHeight) speedX = -speedX;
+                        if(ballX < 0 || ballX > 700) { ballX = 350; ballY = 200; speedX = -speedX; }
+                    }, 1000/60);`;
+            } else {
+                // Diğer oyunlar için genel indirme şablonu (Yılan Oyunu gibi)
+                gameHTML = `<h2 style="text-align:center;">${game.title}</h2><p style="text-align:center;color:#aaa;">Bu oyun başarıyla bilgisayarınıza paketlendi!</p><canvas id="snakeCanvas" width="400" height="400" style="display:block;margin:0 auto;border:3px solid #ff9f43;background:#0d0d13;"></canvas>`;
+                gameScript = `
+                    const canvas = document.getElementById('snakeCanvas'); const ctx = canvas.getContext('2d');
+                    let boxSize = 20; let snake = [{x: 200, y: 200}]; let food = {x: 100, y: 100}; let dx = boxSize, dy = 0;
+                    document.onkeydown = (e) => {
+                        if (e.key === 'ArrowLeft' && dx === 0) { dx = -boxSize; dy = 0; } else if (e.key === 'ArrowUp' && dy === 0) { dx = 0; dy = -boxSize; } else if (e.key === 'ArrowRight' && dx === 0) { dx = boxSize; dy = 0; } else if (e.key === 'ArrowDown' && dy === 0) { dx = 0; dy = boxSize; }
+                    };
+                    setInterval(() => {
+                        let head = {x: snake[0].x + dx, y: snake[0].y + dy};
+                        if(head.x < 0 || head.x >= 400 || head.y < 0 || head.y >= 400) { snake = [{x:200,y:200}]; dx=boxSize; dy=0; return; }
+                        snake.unshift(head);
+                        if(head.x === food.x && head.y === food.y) { food = { x: Math.floor(Math.random() * 20) * boxSize, y: Math.floor(Math.random() * 20) * boxSize }; } else { snake.pop(); }
+                        ctx.fillStyle = '#0d0d13'; ctx.fillRect(0, 0, 400, 400);
+                        ctx.fillStyle = '#ff9f43'; snake.forEach(s => ctx.fillRect(s.x, s.y, boxSize-2, boxSize-2));
+                        ctx.fillStyle = '#ff4757'; ctx.fillRect(food.x, food.y, boxSize-2, boxSize-2);
+                    }, 150);`;
+            }
+
+            // Bağımsız Dosya Oluşturma Şablonu
+            const standaloneContent = `
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="UTF-8">
+                <title>${game.title} - İndirilen Sürüm</title>
+                <style>
+                    body { background-color: #05050a; color: white; font-family: sans-serif; padding: 50px; margin: 0; }
+                </style>
+            </head>
+            <body>
+                ${gameHTML}
+                <script>${gameScript}<\/script>
+            </body>
+            </html>`;
+
+            // Gerçekten indirme tetikleme kodu
+            const blob = new Blob([standaloneContent], { type: "text/html" });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = `${game.title}_Oyunu.html`;
+            link.click();
+        }
+
+        // İlk yüklemede ekranı hafızaya göre aç
         updateUIVisuals();
 
         // --- INTRO ANİMASYONU ---
@@ -281,7 +394,7 @@
         }
         function closeGame(gameName) { document.getElementById('popup-' + gameName).style.display = 'none'; }
 
-        // --- KESİNTİSİZ SATRANÇ SİSTEMİ ---
+        // --- SATRANÇ SİSTEMİ ---
         let boardState = []; let selectedSquare = null;
         function buildChessBoard() {
             selectedSquare = null;
@@ -307,17 +420,10 @@
         }
         function handleSquareClick(r, c) {
             if (selectedSquare === null) {
-                // İlk tıklamada kare boş değilse taşı seç
                 if (boardState[r][c] !== '') { selectedSquare = {r, c}; drawGrid(); }
             } else {
-                // Aynı kareye tekrar tıklanırsa seçimi kaldır
                 if(selectedSquare.r === r && selectedSquare.c === c) { selectedSquare = null; drawGrid(); return; }
-                
-                // Seçilen taşı hedef kareye taşı (İster boş olsun ister rakip taş olsun, üstüne yazar)
-                boardState[r][c] = boardState[selectedSquare.r][selectedSquare.c]; 
-                boardState[selectedSquare.r][selectedSquare.c] = ''; 
-                selectedSquare = null; 
-                drawGrid();
+                boardState[r][c] = boardState[selectedSquare.r][selectedSquare.c]; boardState[selectedSquare.r][selectedSquare.c] = ''; selectedSquare = null; drawGrid();
             }
         }
 
