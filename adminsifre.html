@@ -15,9 +15,21 @@
 
     <div id="admin-icerik" style="display: none; text-align: center; margin-top: 50px;">
         <h3>Hoş geldiniz, Kral Ayhan!</h3>
-        <p>Burası sizin gizli admin panelinizdir. Artık burayı görebiliyorsunuz.</p>
-        </div>
+        <p>Burası sizin gizli admin panelinizdir.</p>
+    </div>
 
-    <script src="adminsifre.js"></script>
+    <script>
+    function kontrolEt() {
+        var girilenSifre = document.getElementById("password-input").value;
+        
+        if (girilenSifre === "Kral Ayhan 123") {
+            document.getElementById("login-form").style.display = "none";
+            document.getElementById("admin-icerik").style.display = "block";
+        } else {
+            document.getElementById("hata-mesaji").style.display = "block";
+        }
+    }
+    </script>
+
 </body>
 </html>
