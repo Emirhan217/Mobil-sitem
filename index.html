@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Oyun Dünyası | İki Oyun Bir Arada</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/chessboard-1.0.0.min.css">
     <style>
         * {
             margin: 0;
@@ -46,7 +47,7 @@
             font-weight: 500;
         }
 
-        /* Giriş Ekranı (Karşılama) */
+        /* Giriş Ekranı */
         .hero {
             height: 100vh;
             display: flex;
@@ -89,7 +90,7 @@
             transform: translateY(-3px);
         }
 
-        /* Oyunlar Bölümü Izgarası */
+        /* Oyunlar Bölümü */
         .games-section {
             padding: 120px 20px;
             text-align: center;
@@ -127,7 +128,7 @@
             color: #ff9f43;
         }
 
-        /* 1. OYUN: TIKLAMA OYUNU */
+        /* Tıklama Oyunu */
         .click-game-area {
             background-color: #16161a;
             transition: background-color 0.4s ease;
@@ -158,29 +159,12 @@
         .click-btn:active { transform: scale(0.95); }
         .click-btn:hover { background-color: #ff5e3a; color: white; }
 
-        /* 2. OYUN: SATRANÇ */
-        .chessboard {
-            display: grid;
-            grid-template-columns: repeat(8, 1fr);
-            grid-template-rows: repeat(8, 1fr);
+        /* Satranç Tahtası Boyutlandırması */
+        #board {
             width: 100%;
-            aspect-ratio: 1;
-            border: 4px solid #333;
-            margin-bottom: 15px;
+            max-width: 360px;
+            margin: 0 auto 15px auto;
         }
-
-        .square {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 2.2rem;
-            cursor: pointer;
-            user-select: none;
-        }
-
-        .white-square { background-color: #f0d9b5; }
-        .black-square { background-color: #b58863; }
-        .square.selected { background-color: #7ab873 !important; }
 
         .status-text {
             font-size: 1.2rem;
@@ -230,16 +214,20 @@
                 <h3>Satranç Oyunu</h3>
                 <p class="status-text">Sıra: <span id="turn-text" style="color: #ff9f43; font-weight: bold;">Beyazda</span></p>
                 
-                <div id="board" class="chessboard"></div>
+                <div id="board"></div>
                 
-                <button class="btn-reset" onclick="resetGame()">Oyunu Yeniden Başlat</button>
+                <button class="btn-reset" id="resetBtn">Oyunu Yeniden Başlat</button>
             </div>
 
         </div>
     </section>
 
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/chessboard-1.0.0.min.js"></script>
+
     <script>
-        // --- 1. TIKLAMA OYUNU LOGIC ---
+        // --- 1. TIKLAMA OYUNU ---
         let score = 0;
         const clickBgColors = ['#16161a', '#1e3c72', '#11998e', '#7F00FF', '#ff5e62'];
 
@@ -253,99 +241,76 @@
             }
         }
 
-        // --- 2. SATRANÇ OYUNU LOGIC ---
-        const initialBoard = [
-            ['r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'],
-            ['p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'],
-            ['', '', '', '', '', '', '', ''],
-            ['', '', '', '', '', '', '', ''],
-            ['', '', '', '', '', '', '', ''],
-            ['', '', '', '', '', '', '', ''],
-            ['P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'],
-            ['R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R']
-        ];
+        // --- 2. SATRANÇ OYUNU (BUGSUZ & KURAL KONTROLLÜ) ---
+        var board = null;
+        var game = new Chess();
+        var $turnText = $('#turn-text');
 
-        const piecesSymbols = {
-            'R': '♜', 'N': '♞', 'B': '♝', 'Q': '♛', 'K': '♚', 'P': '♟',
-            'r': '♜', 'n': '♞', 'b': '♝', 'q': '♛', 'k': '♚', 'p': '♟'
-        };
+        function onDragStart (source, piece, position, orientation) {
+            // Oyun bittiyse veya yanlış oyuncunun sırasındaki taşa dokunulduysa hareketi engelle
+            if (game.game_over()) return false;
 
-        const pieceColors = {
-            'R': 'w', 'N': 'w', 'B': 'w', 'Q': 'w', 'K': 'w', 'P': 'w',
-            'r': 'b', 'n': 'b', 'b': 'b', 'q': 'b', 'k': 'b', 'p': 'b'
-        };
-
-        let currentBoard = JSON.parse(JSON.stringify(initialBoard));
-        let turn = 'w'; 
-        let selectedSquare = null;
-
-        const boardElement = document.getElementById('board');
-        const turnText = document.getElementById('turn-text');
-
-        function createBoard() {
-            boardElement.innerHTML = '';
-            for (let r = 0; r < 8; r++) {
-                for (let c = 0; c < 8; c++) {
-                    const square = document.createElement('div');
-                    const isBlackSquare = (r + c) % 2 === 1;
-                    square.classList.add('square', isBlackSquare ? 'black-square' : 'white-square');
-                    
-                    const piece = currentBoard[r][c];
-                    if (piece) {
-                        square.textContent = piecesSymbols[piece];
-                        square.style.color = pieceColors[piece] === 'w' ? '#ffffff' : '#000000';
-                    }
-
-                    if (selectedSquare && selectedSquare.row === r && selectedSquare.col === c) {
-                        square.classList.add('selected');
-                    }
-
-                    square.addEventListener('click', () => onSquareClick(r, c));
-                    boardElement.appendChild(square);
-                }
+            if ((game.turn() === 'w' && piece.search(/^b/) !== -1) ||
+                (game.turn() === 'b' && piece.search(/^w/) !== -1)) {
+                return false;
             }
         }
 
-        function onSquareClick(r, c) {
-            const piece = currentBoard[r][c];
+        function onDrop (source, target) {
+            // Yapılan hamlenin kurallara uygunluğunu kontrol et
+            var move = game.move({
+                from: source,
+                to: target,
+                promotion: 'q' // Piyon sona ulaştığında otomatik olarak vezire dönüşür
+            });
 
-            if (selectedSquare) {
-                if (selectedSquare.row === r && selectedSquare.col === c) {
-                    selectedSquare = null;
-                    createBoard();
-                    return;
-                }
+            // Hamle geçersiz veya kurallara aykırıysa taşı eski yerine geri fırlat
+            if (move === null) return 'snapback';
 
-                // Taşı taşı
-                currentBoard[r][c] = currentBoard[selectedSquare.row][selectedSquare.col];
-                currentBoard[selectedSquare.row][selectedSquare.col] = '';
-                selectedSquare = null;
-                
-                // Sıra değişimi
-                turn = turn === 'w' ? 'b' : 'w';
-                turnText.textContent = turn === 'w' ? 'Beyazda' : 'Siyahda';
-                turnText.style.color = turn === 'w' ? '#ff9f43' : '#a2a2a2';
-                
-                createBoard();
+            updateStatus();
+        }
+
+        function onSnapEnd () {
+            board.position(game.fen());
+        }
+
+        function updateStatus () {
+            var statusText = '';
+            var activeColor = game.turn() === 'w' ? 'Beyazda' : 'Siyahda';
+
+            if (game.in_checkmate()) {
+                statusText = 'Oyun bitti! ' + (game.turn() === 'w' ? 'Siyah' : 'Beyaz') + ' kazandı (Mat).';
+            } else if (game.in_draw()) {
+                statusText = 'Oyun bitti! Berabere.';
             } else {
-                if (piece && pieceColors[piece] === turn) {
-                    selectedSquare = { row: r, col: c };
-                    createBoard();
+                statusText = activeColor;
+                if (game.in_check()) {
+                    statusText += ' (Şah!)';
                 }
             }
+
+            $turnText.html(statusText);
+            $turnText.css('color', game.turn() === 'w' ? '#ff9f43' : '#a2a2a2');
         }
 
-        function resetGame() {
-            currentBoard = JSON.parse(JSON.stringify(initialBoard));
-            turn = 'w';
-            selectedSquare = null;
-            turnText.textContent = 'Beyazda';
-            turnText.style.color = '#ff9f43';
-            createBoard();
-        }
+        var config = {
+            draggable: true,
+            position: 'start',
+            onDragStart: onDragStart,
+            onDrop: onDrop,
+            onSnapEnd: onSnapEnd,
+            pieceTheme: 'https://chessboardjs.com/img/chesspieces/wikipedia/{piece}.png'
+        };
+        
+        board = Chessboard('board', config);
+        updateStatus();
 
-        // Başlangıçta tahtayı yükle
-        createBoard();
+        // Sıfırlama Butonu Akışı
+        $('#resetBtn').on('click', function() {
+            game.reset();
+            board.start();
+            updateStatus();
+        });
     </script>
 </body>
 </html>
