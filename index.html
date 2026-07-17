@@ -109,20 +109,11 @@
         .game-card h3 { color: #fff; font-size: 28px; font-weight: 700; margin: 15px 0 10px 0; }
         .game-card p { color: #b0b0bc; font-size: 15px; line-height: 1.5; height: 70px; overflow: hidden; margin-bottom: 20px; }
 
-        /* BUTON GRUPLARI VE ÇİFT SEÇENEK */
-        .btn-group { display: flex; gap: 10px; width: 100%; justify-content: center; margin-top: auto; }
-
         .game-btn {
-            background: linear-gradient(135deg, #bc13fe, #8a06c4); color: #fff; border: none; padding: 12px 25px; border-radius: 12px;
-            cursor: pointer; font-weight: bold; font-size: 14px; letter-spacing: 1px; transition: all 0.3s ease; text-transform: uppercase; flex: 1;
+            background: linear-gradient(135deg, #bc13fe, #8a06c4); color: #fff; border: none; padding: 14px 35px; border-radius: 12px;
+            cursor: pointer; font-weight: bold; font-size: 16px; letter-spacing: 1px; transition: all 0.3s ease; text-transform: uppercase; width: 100%;
         }
         .game-btn:hover { background: linear-gradient(135deg, #39ff14, #2cd810); color: #000; box-shadow: 0 0 20px rgba(57, 255, 20, 0.6); transform: translateY(-2px); }
-
-        .download-btn {
-            background: linear-gradient(135deg, #ff9f43, #ff6b6b); color: #fff; border: none; padding: 12px 25px; border-radius: 12px;
-            cursor: pointer; font-weight: bold; font-size: 14px; letter-spacing: 1px; transition: all 0.3s ease; text-transform: uppercase; flex: 1;
-        }
-        .download-btn:hover { background: linear-gradient(135deg, #00f2ff, #0072ff); color: #fff; box-shadow: 0 0 20px #00f2ff; transform: translateY(-2px); }
 
         .store-btn {
             background: linear-gradient(135deg, #00f2ff, #0072ff); color: #fff; border: none; padding: 14px 30px; border-radius: 12px;
@@ -197,7 +188,7 @@
 
     <div class="container" id="magaza" style="background: rgba(10, 5, 20, 0.6); border-top: 2px solid #00f2ff;">
         <h2 style="background: linear-gradient(to right, #00f2ff, #bc13fe); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Oyun Mağazası</h2>
-        <p style="color: #00f2ff; font-size: 18px; margin-bottom: 40px;">İstediğin oyunu tarayıcına kalıcı yükle ya da bağımsız dosya olarak cihazına indir!</p>
+        <p style="color: #00f2ff; font-size: 18px; margin-bottom: 40px;">Yükle butonuna basarak oyunu hem telefonuna dosya olarak indir, hem de ana ekrana ekle!</p>
         <div class="games-grid" id="store-games-area">
             </div>
     </div>
@@ -218,7 +209,6 @@
             snake: { id: 'snake', logo: '🐍', title: 'Yılan Oyunu', desc: 'Yemleri topla, kendine veya duvarlara çarpmadan en uzun boya ulaş.' }
         };
 
-        // KULLANICI LOCALSTORAGE HAFIZASI (Gerçekten Tarayıcıda Kalır)
         let yukluOyunlar = JSON.parse(localStorage.getItem('yukluOyunlar')) || [];
 
         function updateUIVisuals() {
@@ -237,10 +227,7 @@
                             <div class="game-logo">${game.logo}</div>
                             <h3>${game.title}</h3>
                             <p>${game.desc}</p>
-                            <div class="btn-group">
-                                <button class="game-btn" onclick="openGame('${game.id}')">Oyna</button>
-                                <button class="download-btn" onclick="downloadGameStandalone('${game.id}')">İndir</button>
-                            </div>
+                            <button class="game-btn" onclick="openGame('${game.id}')">Oyna</button>
                         </div>`;
                 }
             });
@@ -254,29 +241,29 @@
                         <div class="game-logo" style="border-color: #00f2ff; box-shadow: 0 0 10px rgba(0,242,255,0.3);">${game.logo}</div>
                         <h3>${game.title}</h3>
                         <p>${game.desc}</p>
-                        <button class="store-btn" id="btn-${game.id}" ${isInstalled ? 'disabled' : ''} onclick="installGame('${game.id}')">
+                        <button class="store-btn" id="btn-${game.id}" ${isInstalled ? 'disabled' : ''} onclick="installAndDownload('${gameId}')">
                             ${isInstalled ? 'Yüklendi' : 'Yükle'}
                         </button>
                     </div>`;
             });
         }
 
-        // Mağazadan Yükleye Basınca Gerçekten Hafızaya Yükleme
-        function installGame(gameId) {
+        // Hem ana ekrana kuran hem de telefonu tetikleyip direkt indiren ana fonksiyon
+        function installAndDownload(gameId) {
             if(!yukluOyunlar.includes(gameId)) {
                 yukluOyunlar.push(gameId);
                 localStorage.setItem('yukluOyunlar', JSON.stringify(yukluOyunlar));
                 updateUIVisuals();
+                downloadGameStandalone(gameId); // Telefon indirme sistemini tetikler
             }
         }
 
-        // GERÇEK DOSYA OLARAK BİLGİSAYARA/TELEFONA İNDİRME FONKSİYONU
+        // TELEFONA DIREKT DOSYA INDIRME MOTORU
         function downloadGameStandalone(gameId) {
             const game = TÜM_OYUNLAR[gameId];
             let gameScript = "";
             let gameHTML = "";
 
-            // Her oyunun kodunu bağımsız çalışacak şekilde ayırıyoruz
             if(gameId === 'chess') {
                 gameHTML = `<h2 style="color:#bc13fe;text-align:center;">Satranç</h2><div id="chess-board" style="display:grid;grid-template-columns:repeat(8,55px);grid-template-rows:repeat(8,55px);margin:20px auto;width:440px;border:5px solid #bc13fe;"></div>`;
                 gameScript = `
@@ -304,11 +291,12 @@
                         }
                     } drawGrid();`;
             } else if(gameId === 'tennis') {
-                gameHTML = `<h2 style="color:#39ff14;text-align:center;">Tenis</h2><div style="text-align:center;font-size:24px;margin-bottom:10px;">Skorlar Canvas İçinde</div><canvas id="pongCanvas" width="700" height="400" style="display:block;margin:0 auto;border:3px solid #39ff14;background:#000;"></canvas>`;
+                gameHTML = `<h2 style="color:#39ff14;text-align:center;">Tenis</h2><canvas id="pongCanvas" width="700" height="400" style="display:block;margin:0 auto;border:3px solid #39ff14;background:#000;"></canvas>`;
                 gameScript = `
                     const canvas = document.getElementById('pongCanvas'); const ctx = canvas.getContext('2d');
                     let ballX = 350, ballY = 200, speedX = 5, speedY = 5, pY = 150, bY = 150, pHeight = 90, bHeight = 90;
                     canvas.onmousemove = (e) => { let rect = canvas.getBoundingClientRect(); pY = e.clientY - rect.top - pHeight / 2; };
+                    canvas.ontouchmove = (e) => { let rect = canvas.getBoundingClientRect(); pY = e.touches[0].clientY - rect.top - pHeight / 2; e.preventDefault(); };
                     setInterval(() => {
                         ctx.fillStyle = '#000'; ctx.fillRect(0, 0, 700, 400);
                         ctx.fillStyle = '#39ff14'; ctx.beginPath(); ctx.arc(ballX, ballY, 10, 0, Math.PI*2); ctx.fill(); ctx.fillRect(15, pY, 15, pHeight);
@@ -321,8 +309,7 @@
                         if(ballX < 0 || ballX > 700) { ballX = 350; ballY = 200; speedX = -speedX; }
                     }, 1000/60);`;
             } else {
-                // Diğer oyunlar için genel indirme şablonu (Yılan Oyunu gibi)
-                gameHTML = `<h2 style="text-align:center;">${game.title}</h2><p style="text-align:center;color:#aaa;">Bu oyun başarıyla bilgisayarınıza paketlendi!</p><canvas id="snakeCanvas" width="400" height="400" style="display:block;margin:0 auto;border:3px solid #ff9f43;background:#0d0d13;"></canvas>`;
+                gameHTML = `<h2 style="text-align:center;">${game.title}</h2><canvas id="snakeCanvas" width="400" height="400" style="display:block;margin:0 auto;border:3px solid #ff9f43;background:#0d0d13;"></canvas>`;
                 gameScript = `
                     const canvas = document.getElementById('snakeCanvas'); const ctx = canvas.getContext('2d');
                     let boxSize = 20; let snake = [{x: 200, y: 200}]; let food = {x: 100, y: 100}; let dx = boxSize, dy = 0;
@@ -340,32 +327,15 @@
                     }, 150);`;
             }
 
-            // Bağımsız Dosya Oluşturma Şablonu
-            const standaloneContent = `
-            <!DOCTYPE html>
-            <html>
-            <head>
-                <meta charset="UTF-8">
-                <title>${game.title} - İndirilen Sürüm</title>
-                <style>
-                    body { background-color: #05050a; color: white; font-family: sans-serif; padding: 50px; margin: 0; }
-                </style>
-            </head>
-            <body>
-                ${gameHTML}
-                <script>${gameScript}<\/script>
-            </body>
-            </html>`;
+            const standaloneContent = `<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>${game.title}</title><style>body { background-color: #05050a; color: white; font-family: sans-serif; padding: 20px; margin: 0; }</style></head><body>${gameHTML}<script>${gameScript}<\/script></body></html>`;
 
-            // Gerçekten indirme tetikleme kodu
             const blob = new Blob([standaloneContent], { type: "text/html" });
             const link = document.createElement("a");
             link.href = URL.createObjectURL(blob);
-            link.download = `${game.title}_Oyunu.html`;
+            link.download = `${game.title}.html`;
             link.click();
         }
 
-        // İlk yüklemede ekranı hafızaya göre aç
         updateUIVisuals();
 
         // --- INTRO ANİMASYONU ---
@@ -433,6 +403,7 @@
             const canvas = document.getElementById('pongCanvas'); const ctx = canvas.getContext('2d');
             let ballX = 350, ballY = 200, speedX = 5, speedY = 5; let pY = 150, bY = 150, pHeight = 90, bHeight = 90;
             canvas.onmousemove = (e) => { let rect = canvas.getBoundingClientRect(); pY = e.clientY - rect.top - pHeight / 2; };
+            canvas.ontouchmove = (e) => { let rect = canvas.getBoundingClientRect(); pY = e.touches[0].clientY - rect.top - pHeight / 2; e.preventDefault(); };
             clearInterval(pongInterval);
             pongInterval = setInterval(() => {
                 if(document.getElementById('popup-tennis').style.display !== 'flex') { clearInterval(pongInterval); return; }
