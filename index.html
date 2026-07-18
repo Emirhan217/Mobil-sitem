@@ -216,7 +216,7 @@
             </div>
     </div>
 
-    <div id="popup-chess" class="game-popup"><span class="close-btn" onclick="closeGame('chess')">&times;</span><h2 style="color: #bc13fe; margin-bottom: 20px; font-size: 32px;">Satranç</h2><div id="chess-board"></div></div>
+    <div id="popup-chess" class="game-popup"><span class="close-btn" onclick="closeGame('chess')">&times;</span><h2 style="color: #bc13fe; margin-bottom: 10px; font-size: 32px;">Satranç</h2><div id="chess-turn" style="color: #39ff14; font-size: 18px; margin-bottom: 10px;">Sıra: Beyazda (Piyonlar üste doğru gider)</div><div id="chess-board"></div></div>
     <div id="popup-tennis" class="game-popup"><span class="close-btn" onclick="closeGame('tennis')">&times;</span><h2 style="color: #39ff14; margin-bottom: 10px; font-size: 32px;">Tenis</h2><div style="font-size: 24px; color: #fff; margin-bottom: 15px;">Siz: <span id="pScore">0</span> | Bot: <span id="bScore">0</span></div><canvas id="pongCanvas" width="700" height="400"></canvas></div>
     <div id="popup-click" class="game-popup"><span class="close-btn" onclick="closeGame('click')">&times;</span><h2 style="color: #00f2ff; margin-bottom: 20px; font-size: 32px;">Hız Testi</h2><div id="click-box" onclick="handleClickBox()">TIKLA BAŞLA</div><p id="click-score" style="font-size: 24px; margin-top: 20px; color: #39ff14;"></p></div>
     <div id="popup-memory" class="game-popup"><span class="close-btn" onclick="closeGame('memory')">&times;</span><h2 style="color: #ff9f43; margin-bottom: 20px; font-size: 32px;">Hafıza Kartları</h2><div id="memory-board"></div></div>
@@ -252,7 +252,7 @@
                 </div>
                 <div style="font-size:14px; border-bottom:1px solid #333; padding-bottom:3px; color:#00f2ff; font-weight:bold;">HEDEFLER:</div>
                 <div id="cq-enemies" style="max-height:140px; overflow-y:auto; margin-top:5px;"></div>
-                <div class="cq-log" id="cq-log-box">> Emirlerinizi bekliyoruz...</div>
+                <div class="conquest-log" id="cq-log-box">> Emirlerinizi bekliyoruz...</div>
             </div>
         </div>
     </div>
@@ -260,7 +260,7 @@
     <script>
         // --- SİTENİN ORİJİNAL OYUNLARI ---
         const SABIT_OYUNLAR = {
-            chess: { id: 'chess', logo: '👑', title: 'Satranç', desc: 'Gelişmiş taş seçme ve yeme mekanizmalı, tamamen düzeltilmiş kararlı satranç.' },
+            chess: { id: 'chess', logo: '👑', title: 'Satranç', desc: 'Tamamen gerçek kurallara (L giden at, düz giden kale, piyon kuralları) sahip hatasız satranç modu.' },
             tennis: { id: 'tennis', logo: '🎾', title: 'Tenis', desc: 'Yapay zekaya sahip gelişmiş bota karşı reflekslerini yarıştır.' },
             click: { id: 'click', logo: '🎯', title: 'Renkli Tıklama', desc: 'Doğru renge en hızlı sürede tıkla ve kendi milisaniye rekorunu kır.' },
             memory: { id: 'memory', logo: '🧠', title: 'Hafıza Oyunu', desc: 'Kart eşleştirme mekaniği ile zihnini test et ve süreye meydan oku.' },
@@ -273,7 +273,7 @@
                 id: 'conquest', 
                 logo: '⚔️', 
                 title: 'İmparatorluk Fethi', 
-                desc: 'Kendi hayali imparatorluğunu kur, ekonomini yönet, teknolojini geliştir ve dünyayı ele geçir!' 
+                desc: 'Kendi hayali imparatorluğunu kur, ekonomini yönet, teknolojini geliştir and dünyayı ele geçir!' 
             }
         };
 
@@ -576,12 +576,19 @@
         setTimeout(() => { document.getElementById('portal-element').style.display = 'none'; document.getElementById('characters-element').style.display = 'none'; document.getElementById('tekkur-yazisi').style.display = 'block'; }, 3200);
         setTimeout(() => { document.getElementById('intro-container').style.transition = 'opacity 0.8s'; document.getElementById('intro-container').style.opacity = '0'; setTimeout(() => { document.getElementById('intro-container').style.display = 'none'; }, 800); }, 6000);
 
-        // --- MOBİL UYUMLU VE SAF JAVASCRIPT SATRANÇ SİSTEMİ ---
+
+        // --- GERÇEK KURALLI SATRANÇ MOTORU (YENİLENMİŞ) ---
         let boardState = []; 
         let selectedSquare = null; 
+        let currentTurn = 'W'; // 'W' = Beyaz, 'B' = Siyah
+
+        const WHITE_PIECES = ['♙', '♖', '♘', '♗', '♕', '♔'];
+        const BLACK_PIECES = ['♟', '♜', '♞', '♝', '♛', '♚'];
 
         function buildChessBoard() {
             selectedSquare = null;
+            currentTurn = 'W';
+            updateTurnText();
             boardState = [
                 ['♜','♞','♝','♛','♚','♝','♞','♜'],
                 ['♟','♟','♟','♟','♟','♟','♟','♟'],
@@ -593,6 +600,13 @@
                 ['♖','♘','♗','♕','♔','♗','♘','♖']
             ];
             drawGrid();
+        }
+
+        function updateTurnText() {
+            const txt = document.getElementById('chess-turn');
+            if (txt) {
+                txt.textContent = currentTurn === 'W' ? "Sıra: Beyazda (Piyonlar yukarı gider)" : "Sıra: Siyahda (Piyonlar aşağı gider)";
+            }
         }
 
         function drawGrid() {
@@ -609,7 +623,6 @@
                         sq.classList.add('selected');
                     }
                     
-                    // Hem masaüstü klik hem mobil dokunmatik koruması eklendi
                     sq.onclick = (e) => {
                         e.preventDefault();
                         handleSquareClick(r, c);
@@ -620,21 +633,122 @@
         }
 
         function handleSquareClick(r, c) {
+            const piece = boardState[r][c];
+
             if (selectedSquare === null) {
-                if (boardState[r][c] !== '') {
-                    selectedSquare = { r: r, c: c };
+                // Hamle sırası kimdeyse sadece onun taşları seçilebilir
+                if (piece !== '') {
+                    if (currentTurn === 'W' && WHITE_PIECES.includes(piece)) {
+                        selectedSquare = { r: r, c: c };
+                    } else if (currentTurn === 'B' && BLACK_PIECES.includes(piece)) {
+                        selectedSquare = { r: r, c: c };
+                    }
                 }
             } else {
+                // Aynı taşa tıklanırsa seçimi iptal et
                 if (selectedSquare.r === r && selectedSquare.c === c) {
                     selectedSquare = null;
                 } else {
-                    boardState[r][c] = boardState[selectedSquare.r][selectedSquare.c];
-                    boardState[selectedSquare.r][selectedSquare.c] = '';
-                    selectedSquare = null;
+                    // Gitmek istenen kural geçerli mi kontrol et
+                    if (validateMove(selectedSquare.r, selectedSquare.c, r, c)) {
+                        boardState[r][c] = boardState[selectedSquare.r][selectedSquare.c];
+                        boardState[selectedSquare.r][selectedSquare.c] = '';
+                        selectedSquare = null;
+                        // Sıra değiştir
+                        currentTurn = currentTurn === 'W' ? 'B' : 'W';
+                        updateTurnText();
+                    } else {
+                        // Kural dışıysa taşı seçmeyi bırak veya kendi başka taşına tıkladıysa onu seç
+                        if (piece !== '' && ((currentTurn === 'W' && WHITE_PIECES.includes(piece)) || (currentTurn === 'B' && BLACK_PIECES.includes(piece)))) {
+                            selectedSquare = { r: r, c: c };
+                        } else {
+                            selectedSquare = null;
+                        }
+                    }
                 }
             }
             drawGrid();
         }
+
+        // KURAL KONTROLÜ SAĞLAYAN SİSTEM
+        function validateMove(fromR, fromC, toR, toC) {
+            const piece = boardState[fromR][fromC];
+            const target = boardState[toR][toC];
+
+            // Kendi taşını yiyemezsin kontrolü
+            if (target !== '') {
+                if (WHITE_PIECES.includes(piece) && WHITE_PIECES.includes(target)) return false;
+                if (BLACK_PIECES.includes(piece) && BLACK_PIECES.includes(target)) return false;
+            }
+
+            const diffR = toR - fromR;
+            const diffC = toC - fromC;
+            const absR = Math.abs(diffR);
+            const absC = Math.abs(diffC);
+
+            // 1. PİYON KURALLARI
+            if (piece === '♙') { // Beyaz Piyon (Yukarı gider: - eksilir)
+                if (diffC === 0 && diffR === -1 && target === '') return true; // 1 adım ileri
+                if (diffC === 0 && diffR === -2 && fromR === 6 && boardState[5][fromC] === '' && target === '') return true; // İlk hamle 2 adım
+                if (absC === 1 && diffR === -1 && target !== '') return true; // Çapraz yeme
+                return false;
+            }
+            if (piece === '♟') { // Siyah Piyon (Aşağı gider: + artar)
+                if (diffC === 0 && diffR === 1 && target === '') return true;
+                if (diffC === 0 && diffR === 2 && fromR === 1 && boardState[2][fromC] === '' && target === '') return true;
+                if (absC === 1 && diffR === 1 && target !== '') return true;
+                return false;
+            }
+
+            // 2. KALE KURALLARI (Düz gider)
+            if (piece === '♖' || piece === '♜') {
+                if (fromR !== toR && fromC !== toC) return false; // Düz değilse elenir
+                return checkPathClear(fromR, fromC, toR, toC);
+            }
+
+            // 3. AT KURALLARI (L Şekli: 2'ye 1 veya 1'e 2)
+            if (piece === '♘' || piece === '♞') {
+                if ((absR === 2 && absC === 1) || (absR === 1 && absC === 2)) return true;
+                return false;
+            }
+
+            // 4. FİL KURALLARI (Çapraz gider)
+            if (piece === '♗' || piece === '♝') {
+                if (absR !== absC) return false;
+                return checkPathClear(fromR, fromC, toR, toC);
+            }
+
+            // 5. VEZİR KURALLARI (Düz ya da Çapraz)
+            if (piece === '♕' || piece === '♛') {
+                if (fromR !== toR && fromC !== toC && absR !== absC) return false;
+                return checkPathClear(fromR, fromC, toR, toC);
+            }
+
+            // 6. ŞAH KURALLARI (Her yöne sadece 1 adım)
+            if (piece === '♔' || piece === '♚') {
+                if (absR <= 1 && absC <= 1) return true;
+                return false;
+            }
+
+            return false;
+        }
+
+        // Taşların üzerinden atlamasını engelleyen yol kontrol fonksiyonu
+        function checkPathClear(fromR, fromC, toR, toC) {
+            const stepR = toR === fromR ? 0 : (toR > fromR ? 1 : -1);
+            const stepC = toC === fromC ? 0 : (toC > fromC ? 1 : -1);
+            
+            let currR = fromR + stepR;
+            let currC = fromC + stepC;
+
+            while (currR !== toR || currC !== toC) {
+                if (boardState[currR][currC] !== '') return false; // Arada taş varsa gidemez
+                currR += stepR;
+                currC += stepC;
+            }
+            return true;
+        }
+
 
         // Tenis
         let pongInterval; let playerScore = 0, botScore = 0;
