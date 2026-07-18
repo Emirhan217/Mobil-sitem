@@ -16,6 +16,128 @@
             overflow-x: hidden;
         }
 
+        /* SOL MENÜ (SIDEBAR) SİSTEMİ */
+        #sidebar-menu {
+            position: fixed;
+            top: 80px;
+            left: 20px;
+            width: 70px;
+            max-height: calc(100vh - 120px);
+            background: rgba(15, 15, 25, 0.9);
+            border: 2px solid #bc13fe;
+            border-radius: 20px;
+            z-index: 999;
+            display: none; /* Açılışta gizli, script ile görünecek */
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 10px;
+            box-sizing: border-box;
+            transition: width 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 20px rgba(188, 19, 254, 0.2);
+            overflow: hidden;
+        }
+        #sidebar-menu.ai-expanded {
+            width: 320px; /* AI açıldığında menü genişler */
+        }
+        .menu-items-wrapper {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            align-items: center;
+        }
+        .menu-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background: #141420;
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #fff;
+            font-size: 22px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.3s;
+            position: relative;
+            text-decoration: none;
+        }
+        .menu-btn:hover, .menu-btn.active {
+            background: #bc13fe;
+            color: #fff;
+            box-shadow: 0 0 15px #bc13fe;
+            border-color: #e0b0ff;
+        }
+        .menu-btn span.btn-text {
+            display: none;
+            position: absolute;
+            left: 65px;
+            font-size: 14px;
+            font-weight: bold;
+            white-space: nowrap;
+            background: #141420;
+            padding: 5px 10px;
+            border-radius: 5px;
+            border: 1px solid #bc13fe;
+        }
+        #sidebar-menu:not(.ai-expanded) .menu-btn:hover span.btn-text {
+            display: block;
+        }
+        #sidebar-menu.ai-expanded .menu-btn {
+            justify-content: flex-start;
+            width: 100%;
+            padding-left: 15px;
+            font-size: 16px;
+            gap: 12px;
+        }
+        #sidebar-menu.ai-expanded .menu-btn span.btn-text {
+            display: inline;
+            position: static;
+            border: none;
+            padding: 0;
+            background: transparent;
+        }
+
+        /* GAME AI PANELİ */
+        #ai-panel {
+            display: none;
+            width: 100%;
+            flex-direction: column;
+            margin-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            padding-top: 15px;
+            height: 300px;
+        }
+        .ai-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #39ff14;
+            text-shadow: 0 0 8px rgba(57,255,20,0.4);
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        #ai-chat-box {
+            flex: 1;
+            background: #050508;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 8px;
+            overflow-y: auto;
+            font-size: 13px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+        .ai-msg { padding: 6px 10px; border-radius: 8px; max-width: 85%; word-wrap: break-word; }
+        .ai-msg.user { background: #bc13fe; align-self: flex-end; color: #fff; }
+        .ai-msg.bot { background: #1f2833; align-self: flex-start; border-left: 2px solid #39ff14; }
+        .ai-input-area { display: flex; gap: 5px; }
+        #ai-input { flex: 1; background: #141420; border: 1px solid #444; border-radius: 6px; color: #fff; padding: 6px; font-size: 13px; }
+        #ai-input:focus { outline: none; border-color: #39ff14; }
+        .ai-send-btn { background: #39ff14; color: #000; border: none; padding: 0 12px; border-radius: 6px; cursor: pointer; font-weight: bold; }
+
         /* 1. PORTAL VE TEŞEKKÜR ANİMASYON EKRANI */
         #intro-container {
             position: fixed;
@@ -178,6 +300,31 @@
 </head>
 <body>
 
+    <div id="sidebar-menu">
+        <div class="menu-items-wrapper">
+            <a href="#oyunlar" class="menu-btn" onclick="toggleAI(false)">
+                🎮 <span class="btn-text">Oyunlar</span>
+            </a>
+            <a href="#magaza" class="menu-btn" onclick="toggleAI(false)">
+                🛒 <span class="btn-text">Mağaza</span>
+            </a>
+            <button class="menu-btn" id="ai-tab-btn" onclick="toggleAI(true)">
+                🤖 <span class="btn-text">Game AI</span>
+            </button>
+        </div>
+        
+        <div id="ai-panel">
+            <div class="ai-title">✨ Game AI</div>
+            <div id="ai-chat-box">
+                <div class="ai-msg bot">Selam! Ben Game AI. Sitedeki oyunlar hakkında ne öğrenmek istersin? Taktik veya öneri verebilirim!</div>
+            </div>
+            <div class="ai-input-area">
+                <input type="text" id="ai-input" placeholder="Sorunu buraya yaz..." onkeydown="if(event.key==='Enter') sendAIMessage()">
+                <button class="ai-send-btn" onclick="sendAIMessage()">Gönder</button>
+            </div>
+        </div>
+    </div>
+
     <nav>
         <a href="#oyunlar">Ana Ekran</a>
         <a href="#magaza">🛒 Mağazaya Git</a>
@@ -273,7 +420,7 @@
                 id: 'conquest', 
                 logo: '⚔️', 
                 title: 'İmparatorluk Fethi', 
-                desc: 'Kendi hayali imparatorluğunu kur, ekonomini yönet, teknolojini geliştir ve dünyayı ele geçir!' 
+                desc: 'Kendi hayali imparatorluğunu kur, ekonomini yönet, teknolojini geliştir and dünyayı ele geçir!' 
             }
         };
 
@@ -471,7 +618,12 @@
 
         updateUIVisuals();
 
+        // --- PENCERE/MENÜ GÖSTERİM KONTROLLERİ ---
         function openGame(gameName) {
+            // Oyun açıldığında sol menüyü kapat ve tamamen gizle
+            document.getElementById('sidebar-menu').style.display = 'none';
+            toggleAI(false);
+
             document.getElementById('popup-' + gameName).style.display = 'flex';
             if(gameName === 'chess') buildChessBoard();
             if(gameName === 'tennis') startTennisGame();
@@ -479,7 +631,65 @@
             if(gameName === 'snake') startSnakeGame();
             if(gameName === 'conquest') resetConquestUI(); 
         }
-        function closeGame(gameName) { document.getElementById('popup-' + gameName).style.display = 'none'; }
+
+        function closeGame(gameName) { 
+            document.getElementById('popup-' + gameName).style.display = 'none'; 
+            // Oyun kapandığında sol menüyü tekrar görünür yap
+            document.getElementById('sidebar-menu').style.display = 'flex';
+        }
+
+        // Menü Genişleme ve AI Sekmesi Kontrolü
+        function toggleAI(show) {
+            const menu = document.getElementById('sidebar-menu');
+            const aiPanel = document.getElementById('ai-panel');
+            const aiBtn = document.getElementById('ai-tab-btn');
+
+            if(show) {
+                menu.classList.add('ai-expanded');
+                aiPanel.style.display = 'flex';
+                aiBtn.classList.add('active');
+            } else {
+                menu.classList.remove('ai-expanded');
+                aiPanel.style.display = 'none';
+                aiBtn.classList.remove('active');
+            }
+        }
+
+        // MENÜDE ÇALIŞAN LOCAL YAPAY ZEKA SİSTEMİ (Game AI)
+        function sendAIMessage() {
+            const input = document.getElementById('ai-input');
+            const chatBox = document.getElementById('ai-chat-box');
+            const text = input.value.trim();
+            if(!text) return;
+
+            // Kullanıcı mesajı ekle
+            chatBox.innerHTML += `<div class="ai-msg user">${text}</div>`;
+            input.value = '';
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            // Yapay zeka cevap mekanizması (Simüle)
+            setTimeout(() => {
+                let reply = "Bu konuda pek bir fikrim yok ama sitedeki Satranç, Tenis, Yılan, Hafıza ve Hız testlerini oynamanı şiddetle tavsiye ederim!";
+                const lowText = text.toLowerCase();
+
+                if(lowText.includes('satranç') || lowText.includes('chess')) {
+                    reply = "Satranç oyunumuzda tüm taş kuralları aktiftir! Vezirle şahı korumaya dikkat et. Şah çekildiğinde ekranda 'ŞAH!' uyarısı belirir, şah düşerse oyun mat ile biter.";
+                } else if(lowText.includes('yılan') || lowText.includes('snake')) {
+                    reply = "Yılan oyununda turuncu kuyruk bloklarından kaçınmalı ve kırmızı yemleri toplayarak rekor kırmaya çalışmalısın. Yön tuşlarını kullanabilirsin.";
+                } else if(lowText.includes('tenis') || lowText.includes('pong')) {
+                    reply = "Tenis botumuz oldukça akıllıdır, top hızlandıkça yakalaması zorlaşır. Fare hareketlerinle paletini yukarı aşağı kaydırarak savunma yapabilirsin.";
+                } else if(lowText.includes('mağaza') || lowText.includes('conquest') || lowText.includes('fetih')) {
+                    reply = "Mağazadan 'İmparatorluk Fethi' oyununu tek tıkla yükleyebilirsin! Yüklendiğinde bilgisayarına bağımsız sürüm olarak da iner ve listene eklenir.";
+                } else if(lowText.includes('selam') || lowText.includes('merhaba')) {
+                    reply = "Harika oyun sitesine hoş geldin oyuncu! Ben Game AI, sana oyun ipuçları vermek için buradayım. Hangi oyunu merak ediyorsun?";
+                } else if(lowText.includes('nasılsın')) {
+                    reply = "Veritabanım tamamen optimize ve oyun modlarına hazırım! Sen nasılsın, bugün hangi rekoru kırıyoruz?";
+                }
+
+                chatBox.innerHTML += `<div class="ai-msg bot">${reply}</div>`;
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }, 600);
+        }
 
         // --- STRATEJİ OYUNU ARKA PLAN KODLARI ---
         let cqGold, cqArmy, cqTech, cqLand, cqPlayerEmpire;
@@ -571,10 +781,18 @@
             cqUpdateUI();
         }
 
-        // --- SİTENİN ANİMASYON SİSTEMLERİ ---
+        // --- SİTEN ENTRANCE ANİMASYONLARI VE LİSTENER'LAR ---
         setTimeout(() => { document.getElementById('portal-element').style.transform = 'scale(0.4)'; document.getElementById('characters-element').style.display = 'block'; }, 1500);
         setTimeout(() => { document.getElementById('portal-element').style.display = 'none'; document.getElementById('characters-element').style.display = 'none'; document.getElementById('tekkur-yazisi').style.display = 'block'; }, 3200);
-        setTimeout(() => { document.getElementById('intro-container').style.transition = 'opacity 0.8s'; document.getElementById('intro-container').style.opacity = '0'; setTimeout(() => { document.getElementById('intro-container').style.display = 'none'; }, 800); }, 6000);
+        setTimeout(() => { 
+            document.getElementById('intro-container').style.transition = 'opacity 0.8s'; 
+            document.getElementById('intro-container').style.opacity = '0'; 
+            setTimeout(() => { 
+                document.getElementById('intro-container').style.display = 'none'; 
+                // AÇILIŞ SEKANSI BİTTİĞİNDE SIDEBARI AKTİF ET
+                document.getElementById('sidebar-menu').style.display = 'flex';
+            }, 800); 
+        }, 6000);
 
 
         // --- GERÇEK KURALLI VE BITIŞ KONTROLLÜ SATRANÇ ---
@@ -687,13 +905,11 @@
             drawGrid();
         }
 
-        // Aktif olarak tahtada Şah çekme durumu var mı kontrol eden fonksiyon
         function checkAndDisplayShah() {
             clearStatus();
             let whiteKingPos = null;
             let blackKingPos = null;
 
-            // Şahların yerini bul
             for (let r = 0; r < 8; r++) {
                 for (let c = 0; c < 8; c++) {
                     if (boardState[r][c] === '♔') whiteKingPos = { r, c };
@@ -701,7 +917,6 @@
                 }
             }
 
-            // Herhangi bir taş şahı tehdit ediyor mu bak
             for (let r = 0; r < 8; r++) {
                 for (let c = 0; c < 8; c++) {
                     const piece = boardState[r][c];
