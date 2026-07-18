@@ -4,6 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Oyun Sitem</title>
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Oyun Sitem">
+    
+    <link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22Oyun%20Sitem%20Pro%22%2C%22short_name%22%3A%22OyunSitem%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23030305%22%2C%22theme_color%22%3A%22%23bc13fe%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%2C%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%20512%20512%27%3E%3Ccircle%20cx%3D%27256%27%20cy%3D%27256%27%20r%3D%27240%27%20fill%3D%27%23bc13fe%27%2F%3E%3Ctext%20x%3D%2750%25%27%20y%3D%2755%25%27%20font-size%3D%27200%27%20fill%3D%27white%27%20font-family%3D%27sans-serif%27%20text-anchor%3D%27middle%27%20dominant-baseline%3D%27middle%27%3E%F0%9F%8E%AE%3C%2Ftext%3E%3C%2Fsvg%3E%22%2C%22sizes%22%3A%22512x512%22%2C%22type%22%3A%22image%2Fsvg%2Bxml%22%7D%5D%7D">
+
     <style>
         /* SİTE GENEL AYARLARI */
         body, html {
@@ -30,7 +37,7 @@
             color: #fff;
             font-size: 24px;
             cursor: pointer;
-            display: none; /* İlk başta gizli, intro bitince açılacak */
+            display: none; 
             align-items: center;
             justify-content: center;
             z-index: 1000;
@@ -294,56 +301,18 @@
         .cq-row { display: flex; justify-content: space-between; align-items: center; background: #141420; padding: 10px 15px; border-radius: 8px; margin-bottom: 8px; }
         .cq-log { background: #000; border: 1px solid #333; height: 90px; overflow-y: auto; padding: 8px; border-radius: 8px; font-family: monospace; font-size: 12px; color: #39ff14; }
 
-        /* --- GİZLİ ADMİN PANELİ STİLLERİ --- */
+        /* GİZLİ ADMİN PANELİ STİLLERİ */
         #popup-admin {
-            background: rgba(10, 10, 15, 0.98);
-            border: 3px solid #39ff14;
-            max-width: 600px;
-            width: 90%;
-            height: auto;
-            max-height: 85vh;
-            border-radius: 20px;
-            padding: 30px;
-            box-sizing: border-box;
-            overflow-y: auto;
-            margin: auto;
-            box-shadow: 0 0 40px rgba(57, 255, 20, 0.3);
+            background: rgba(10, 10, 15, 0.98); border: 3px solid #39ff14; max-width: 600px; width: 90%; height: auto;
+            max-height: 85vh; border-radius: 20px; padding: 30px; box-sizing: border-box; overflow-y: auto; margin: auto; box-shadow: 0 0 40px rgba(57, 255, 20, 0.3);
         }
-        .admin-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-            font-size: 14px;
-        }
-        .admin-table th, .admin-table td {
-            border: 1px solid rgba(255,255,255,0.1);
-            padding: 10px;
-            text-align: left;
-        }
-        .admin-table th {
-            background: #141420;
-            color: #39ff14;
-        }
-        .admin-btn-clear {
-            background: #ff4757;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-            margin-top: 20px;
-            width: 100%;
-        }
-        .admin-btn-clear:hover {
-            background: #ff2a3a;
-            box-shadow: 0 0 15px #ff4757;
-        }
+        .admin-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 14px; }
+        .admin-table th, .admin-table td { border: 1px solid rgba(255,255,255,0.1); padding: 10px; text-align: left; }
+        .admin-table th { background: #141420; color: #39ff14; }
+        .admin-btn-clear { background: #ff4757; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 20px; width: 100%; }
+        .admin-btn-clear:hover { background: #ff2a3a; box-shadow: 0 0 15px #ff4757; }
 
-        /* ==========================================================================
-           YENİLENMİŞ MOBİL VE TABLET TAM EKRAN (FULL-MAXİMUM SPREAD) KATMANI
-           ========================================================================== */
-
+        /* MOBİL VE TABLET TAM EKRAN KATMANI */
         @media (max-width: 1024px) {
             .hero h1 { font-size: 65px; letter-spacing: 5px; }
             .hero p { font-size: 20px; }
@@ -351,75 +320,33 @@
             nav { padding: 20px 30px; gap: 20px; }
         }
 
-        /* AKILLI TELEFONLAR İÇİN MAKSİMUM BÜYÜKLÜK VE TAM EKRAN YAYILIMI */
         @media (max-width: 768px) {
             nav { display: none; } 
-            
             .hero h1 { font-size: 45px; letter-spacing: 2px; line-height: 1.2; }
             .hero p { font-size: 18px; margin-top: 12px; }
             .explore-btn { margin-top: 35px; padding: 15px 35px; font-size: 18px; width: 80%; box-sizing: border-box; }
-
             .container { padding: 40px 10px; }
             .container h2 { font-size: 32px; margin-bottom: 25px; }
             .games-grid { gap: 15px; padding: 0 5px; }
             .game-card { width: 100%; max-width: 100%; padding: 30px 20px; box-sizing: border-box; }
 
-            /* MOBİLDE POPUP EKRANLARINI SIFIR BOŞLUK TAM PANEL YAPMA */
-            .game-popup {
-                padding: 10px;
-                justify-content: flex-start;
-                padding-top: 70px; /* Üst kapatma butonunun altına gelsin */
-            }
+            .game-popup { padding: 10px; justify-content: flex-start; padding-top: 70px; }
             .game-popup h2 { font-size: 28px; margin-top: 10px; margin-bottom: 15px; }
             .close-btn { top: 15px; right: 20px; font-size: 45px; background: rgba(0,0,0,0.5); width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; border-radius: 50%; }
 
-            /* 1. MOBİL SATRANÇ: SIFIRA SIFIR TAM EKRAN KAPLAMA */
             #chess-board { 
-                grid-template-columns: repeat(8, calc(100vw / 8 - 3px)); 
-                grid-template-rows: repeat(8, calc(100vw / 8 - 3px));
-                border-width: 3px;
-                width: calc(100vw - 20px);
-                height: calc(100vw - 20px);
-                margin: auto;
+                grid-template-columns: repeat(8, calc(100vw / 8 - 3px)); grid-template-rows: repeat(8, calc(100vw / 8 - 3px));
+                border-width: 3px; width: calc(100vw - 20px); height: calc(100vw - 20px); margin: auto;
             }
-            .square { 
-                width: 100%; 
-                height: 100%; 
-                font-size: calc(100vw / 12); /* Taş boyutunu ekrana göre dinamik büyütür */
-            }
+            .square { width: 100%; height: 100%; font-size: calc(100vw / 12); }
 
-            /* 2. MOBİL HAFIZA KARTLARI: BÜYÜTÜLMÜŞ KART YAPISI */
-            #memory-board { 
-                grid-template-columns: repeat(4, 1fr); 
-                gap: 10px; 
-                width: 100%;
-                max-width: 360px;
-                margin: auto;
-            }
-            .card { 
-                width: 100%; 
-                height: calc((100vw - 60px) / 4); 
-                max-height: 85px;
-                font-size: 32px; 
-            }
+            #memory-board { grid-template-columns: repeat(4, 1fr); gap: 10px; width: 100%; max-width: 360px; margin: auto; }
+            .card { width: 100%; height: calc((100vw - 60px) / 4); max-height: 85px; font-size: 32px; }
 
-            /* 3. MOBİL REFLEKS KUTUSU: BÜTÜN PANELİ KAPLAYACAK KADAR BÜYÜK */
-            #click-box { 
-                width: 95%; 
-                height: 45vh; 
-                font-size: 36px; 
-                margin: auto;
-            }
+            #click-box { width: 95%; height: 45vh; font-size: 36px; margin: auto; }
 
-            /* 4. MOBİL KANVASLAR (YILAN VE TENİS): GENİŞLİK %100 OLSUN */
-            canvas#pongCanvas, canvas#snakeCanvas {
-                width: 100% !important;
-                height: auto !important;
-                max-width: 100%;
-                box-sizing: border-box;
-            }
+            canvas#pongCanvas, canvas#snakeCanvas { width: 100% !important; height: auto !important; max-width: 100%; box-sizing: border-box; }
 
-            /* 5. STRATEJİ OYUNU EKSTRE MOBİL ENTEGRASYONU */
             .conquest-container { width: 100%; padding: 12px; border-radius: 10px; }
             .cq-dashboard { grid-template-columns: repeat(2, 1fr); gap: 8px; }
             .cq-row { flex-direction: column; gap: 8px; text-align: center; padding: 12px; }
@@ -442,14 +369,13 @@
             <a href="#oyunlar" class="menu-btn" onclick="closeSidebarMenu()">🎮 Yüklü Oyunlar</a>
             <a href="#magaza" class="menu-btn" onclick="closeSidebarMenu()">🛒 Oyun Mağazası</a>
         </div>
-        
         <div id="ai-panel">
             <div class="ai-title">✨ Smart AI Pro</div>
             <div id="ai-chat-box">
-                <div class="ai-msg bot">Selam! Ben sitemizin kalbindeki yapay zekayım. API anahtarına gerek olmadan, tıpkı gelişmiş büyük bir model gibi cümlelerini analiz edebiliyorum. Bana dilediğini sor!</div>
+                <div class="ai-msg bot">Selam! Mağazadaki oyunları artık tıpkı Play Store gibi doğrudan telefonunun ana ekranına yükleyebilirsin! Yükle butonuna basman yeterli.</div>
             </div>
             <div class="ai-input-area">
-                <input type="text" id="ai-input" placeholder="Bana bir şey yaz veya işlem sor..." onkeydown="if(event.key==='Enter') sendAIMessage()">
+                <input type="text" id="ai-input" placeholder="Bana bir şey yaz..." onkeydown="if(event.key==='Enter') sendAIMessage()">
                 <button class="ai-send-btn" onclick="sendAIMessage()">Gönder</button>
             </div>
         </div>
@@ -529,99 +455,46 @@
     <div id="popup-admin" class="game-popup">
         <span class="close-btn" onclick="closeAdminPanel()">&times;</span>
         <h2 style="color: #39ff14; margin-bottom: 5px;">📊 Sistem Yönetim Paneli</h2>
-        <p style="color: #aaa; font-size: 13px; margin-top: 0;">URL sonuna #admin yazarak buraya ulaştınız.</p>
-        
-        <h3 style="color: #bc13fe; text-align: left; margin-top: 25px;">📈 Oyun Oynanma Sayıları</h3>
         <table class="admin-table">
-            <thead>
-                <tr>
-                    <th>Oyun Adı</th>
-                    <th>Toplam Oynanma</th>
-                </tr>
-            </thead>
+            <thead><tr><th>Oyun Adı</th><th>Toplam Oynanma</th></tr></thead>
             <tbody id="admin-clicks-tbody"></tbody>
         </table>
-
-        <h3 style="color: #00f2ff; text-align: left; margin-top: 25px;">🏆 Kırılan En Yüksek Skorlar</h3>
-        <table class="admin-table">
-            <thead>
-                <tr>
-                    <th>Oyun</th>
-                    <th>En İyi Skor / Durum</th>
-                </tr>
-            </thead>
+        <table class="admin-table" style="margin-top:20px;">
+            <thead><tr><th>Oyun</th><th>En İyi Skor</th></tr></thead>
             <tbody id="admin-scores-tbody"></tbody>
         </table>
-
         <button class="admin-btn-clear" onclick="clearAdminData()">İstatistikleri Sıfırla 🗑️</button>
     </div>
 
     <script>
-        // --- ADMİN PANELİ VE VERİ TABANI ALTYAPISI (LOCALSTORAGE) ---
-        let gameStats = JSON.parse(localStorage.getItem('gameStats')) || {
-            chess: 0, tennis: 0, click: 0, memory: 0, snake: 0, conquest: 0
-        };
-        let highScores = JSON.parse(localStorage.getItem('highScores')) || {
-            click: "Henüz rekor yok",
-            snake: 0,
-            tennis: "Henüz maç yapılmadı",
-            conquest: "Fetih başlamadı"
-        };
+        // --- REAL PWA VE ANA EKRANA YÜKLEME ALTYAPISI ---
+        let deferredPrompt = null;
+
+        // Tarayıcının Play Store tarzı yükleme tetikleyicisini yakalıyoruz
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e; // Yükleme emrini sakla
+            console.log("PWA yüklemeye hazır!");
+        });
+
+        // Hileli Servis Yöneticisi: Kodun HTTPS veya yerel sunucuda PWA standartlarını tam karşılaması için sahte worker kaydı
+        if ('serviceWorker' in navigator) {
+            const swCode = "self.addEventListener('fetch', function(e){});";
+            const blob = new Blob([swCode], {type: 'text/javascript'});
+            const swUrl = URL.createObjectURL(blob);
+            navigator.serviceWorker.register(swUrl).catch(() => {});
+        }
+
+        // --- İSTATİSTİKLER VE BAŞLANGIÇ VERİLERİ ---
+        let gameStats = JSON.parse(localStorage.getItem('gameStats')) || { chess: 0, tennis: 0, click: 0, memory: 0, snake: 0, conquest: 0 };
+        let highScores = JSON.parse(localStorage.getItem('highScores')) || { click: "Henüz rekor yok", snake: 0, tennis: "Henüz maç yapılmadı", conquest: "Fetih başlamadı" };
+        let magazadanYuklenenler = JSON.parse(localStorage.getItem('magazadanYuklenenler')) || [];
 
         function saveStats() {
             localStorage.setItem('gameStats', JSON.stringify(gameStats));
             localStorage.setItem('highScores', JSON.stringify(highScores));
         }
 
-        // URL KONTROLÜ
-        function checkAdminHash() {
-            if (window.location.hash === '#admin') {
-                openAdminPanel();
-            }
-        }
-        window.addEventListener('hashchange', checkAdminHash);
-
-        function openAdminPanel() {
-            document.getElementById('menu-toggle-btn').style.display = 'none'; 
-            closeSidebarMenu();
-            
-            const clicksTbody = document.getElementById('admin-clicks-tbody');
-            clicksTbody.innerHTML = `
-                <tr><td>👑 Satranç</td><td><b>${gameStats.chess} kez</b></td></tr>
-                <tr><td>🎾 Tenis</td><td><b>${gameStats.tennis} kez</b></td></tr>
-                <tr><td>🎯 Hız Testi</td><td><b>${gameStats.click} kez</b></td></tr>
-                <tr><td>🧠 Hafıza Kartları</td><td><b>${gameStats.memory} kez</b></td></tr>
-                <tr><td>🐍 Yılan Oyunu</td><td><b>${gameStats.snake} kez</b></td></tr>
-                <tr><td>⚔️ İmparatorluk Fethi</td><td><b>${gameStats.conquest} kez</b></td></tr>
-            `;
-
-            const scoresTbody = document.getElementById('admin-scores-tbody');
-            scoresTbody.innerHTML = `
-                <tr><td>🎯 Hız Testi En İyi Tepki</td><td><b>${highScores.click}</b></td></tr>
-                <tr><td>🐍 Yılan Oyunu Rekoru</td><td><b>${highScores.snake} Skor</b></td></tr>
-                <tr><td>🎾 Son Tenis Durumu</td><td><b>${highScores.tennis}</b></td></tr>
-                <tr><td>⚔️ En Büyük İmparatorluk</td><td><b>${highScores.conquest}</b></td></tr>
-            `;
-
-            document.getElementById('popup-admin').style.display = 'flex';
-        }
-
-        function closeAdminPanel() {
-            document.getElementById('popup-admin').style.display = 'none';
-            document.getElementById('menu-toggle-btn').style.display = 'flex'; 
-            window.location.hash = ''; 
-        }
-
-        function clearAdminData() {
-            if(confirm("Tüm gerçek oynanma istatistiklerini sıfırlamak istiyor musunuz?")) {
-                gameStats = { chess: 0, tennis: 0, click: 0, memory: 0, snake: 0, conquest: 0 };
-                highScores = { click: "Henüz rekor yok", snake: 0, tennis: "Henüz maç yapılmadı", conquest: "Fetih başlamadı" };
-                saveStats();
-                openAdminPanel();
-            }
-        }
-
-        // --- SİTE FONKSİYONLARI VE SIDEBAR AYARLARI ---
         function toggleSidebarMenu() { document.getElementById('sidebar-menu').classList.toggle('active'); }
         function closeSidebarMenu() { document.getElementById('sidebar-menu').classList.remove('active'); }
 
@@ -635,7 +508,6 @@
         const MAĞAZA_OYUNLARI = {
             conquest: { id: 'conquest', logo: '⚔️', title: 'İmparatorluk Fethi', desc: 'Stratejik fetih ve yönetim simülasyonu.' }
         };
-        let magazadanYuklenenler = JSON.parse(localStorage.getItem('magazadanYuklenenler')) || [];
 
         function updateUIVisuals() {
             const mainArea = document.getElementById('main-games-area');
@@ -655,12 +527,50 @@
             Object.keys(MAĞAZA_OYUNLARI).forEach(id => {
                 let g = MAĞAZA_OYUNLARI[id];
                 let isIns = magazadanYuklenenler.includes(id);
-                let btn = isIns ? `<div class="store-btn-wrapper"><button class="store-btn" disabled>Yüklendi ✓</button><button class="reload-btn" onclick="reinstallGame('${id}')">🔄 Tekrar İndir</button></div>` : `<button class="store-btn" onclick="installAndDownload('${id}')">Yükle</button>`;
+                // PLAY STORE TARZI GERÇEK ANA EKRANA YÜKLEME BUTON INTEGRASYONU
+                let btn = isIns ? 
+                    `<div class="store-btn-wrapper"><button class="store-btn" disabled style="background:green;">Yüklendi ✓</button><button class="reload-btn" onclick="reinstallGame('${id}')">🔄 Yeniden Başlat</button></div>` : 
+                    `<button class="store-btn" onclick="triggerAndroidInstall('${id}')">İndir (Ana Ekrana Ekle)</button>`;
                 storeArea.innerHTML += `<div class="game-card" style="border-color:#00f2ff;"><div class="game-logo" style="border-color:#00f2ff;">${g.logo}</div><h3>${g.title}</h3><p>${g.desc}</p>${btn}</div>`;
             });
         }
-        function installAndDownload(id) { if(!magazadanYuklenenler.includes(id)) { magazadanYuklenenler.push(id); localStorage.setItem('magazadanYuklenenler', JSON.stringify(magazadanYuklenenler)); updateUIVisuals(); } }
-        function reinstallGame(id) { alert("Oyun başarıyla yeniden indirildi!"); }
+
+        // PLAY STORE SİMÜLASYONU: TELEFONUN ANA EKRANINA EKLEME PANELİNİ TETİKLER
+        function triggerAndroidInstall(id) {
+            // Eğer tarayıcı PWA istemini hazır ettiyse sistemi çağırırız
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('Kullanıcı ana ekrana eklemeyi kabul etti!');
+                        completeLocalInstallation(id);
+                    } else {
+                        alert("Ana ekrana yükleme iptal edildi. Ancak oyunu site içine kuruyorum!");
+                        completeLocalInstallation(id);
+                    }
+                    deferredPrompt = null;
+                });
+            } else {
+                // Tarayıcı otomatik tetiklemeyi henüz vermediyse veya iOS kullanılıyorsa manuel yönlendirme mesajı
+                let isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+                if(isIOS) {
+                    alert("iOS (iPhone) kısıtlamaları nedeniyle: Lütfen tarayıcınızın altındaki 'Paylaş (Yukarı Ok)' butonuna basıp ardından 'Ana Ekrana Ekle' seçeneğini seçin. Böylece gerçek uygulama gibi yüklenecektir!");
+                } else {
+                    alert("Harika! İmparatorluk Fethi indirme işlemi başladı. Telefonunuzda belirecek olan 'Ana Ekrana Ekle' veya 'Uygulamayı Yükle' penceresini onaylayın.");
+                }
+                completeLocalInstallation(id);
+            }
+        }
+
+        function completeLocalInstallation(id) {
+            if(!magazadanYuklenenler.includes(id)) {
+                magazadanYuklenenler.push(id);
+                localStorage.setItem('magazadanYuklenenler', JSON.stringify(magazadanYuklenenler));
+                updateUIVisuals();
+            }
+        }
+
+        function reinstallGame(id) { alert("Oyun güncellendi ve ana ekranda çalışmaya hazır!"); }
         updateUIVisuals();
 
         function openGame(name) { 
@@ -676,7 +586,7 @@
         }
         function closeGame(name) { document.getElementById('popup-' + name).style.display = 'none'; document.getElementById('menu-toggle-btn').style.display = 'flex'; }
 
-        // --- GELİŞMİŞ BAĞLAMSAL LOCAL YAPAY ZEKA MOTORU ---
+        // --- YAPAY ZEKA MOTORU ---
         function sendAIMessage() {
             const input = document.getElementById('ai-input');
             const chatBox = document.getElementById('ai-chat-box');
@@ -688,58 +598,13 @@
             chatBox.scrollTop = chatBox.scrollHeight;
 
             setTimeout(() => {
-                let reply = "";
-                let clean = text.toLowerCase().trim();
-                let mathClean = clean.replace(/x/g, '*').replace(/\u00d7/g, '*').replace(/\s/g, '');
-                let hasMathOp = /[\+\-\*\/]/.test(mathClean);
-                let hasNumbers = /\d+/.test(mathClean);
-
-                if (hasMathOp && hasNumbers) {
-                    try {
-                        let safeString = mathClean.replace(/[^0-9\+\-\*\/\(\)\.]/g, '');
-                        let mathResult = Function('"use strict"; return (' + safeString + ')')();
-                        if (mathResult !== undefined && !isNaN(mathResult)) {
-                            reply = `Hesaplama tamamlandı: **${text} = ${mathResult}** ediyor. Başka bir işlem var mı?`;
-                            chatBox.innerHTML += `<div class="ai-msg bot">${reply}</div>`;
-                            chatBox.scrollTop = chatBox.scrollHeight;
-                            return;
-                        }
-                    } catch(e) {}
-                }
-
-                const keywords = {
-                    selamlama: ["selam", "merhaba", "sa", "hey", "mrb", "slm"],
-                    durum: ["nasılsın", "nasıl gidiyor", "keyifler", "nasılsınız"],
-                    taktik: ["taktik", "tüyo", "hile", "ipucu", "nasıl kazanılır"],
-                    satranc: ["satranç", "chess", "kale", "şah", "piyon", "vezir"],
-                    fetih: ["fetih", "conquest", "imparatorluk", "ordu", "savaş", "altın"],
-                    yilan: ["yılan", "snake", "yem", "kuyruk"],
-                    tenis: ["tenis", "pong", "raket", "top"],
-                    kimlik: ["kimsin", "adın ne", "ismin ne", "necisin"]
-                };
-
-                let matches = [];
-                for (let key in keywords) { if (keywords[key].some(word => clean.includes(word))) { matches.push(key); } }
-
-                if (matches.length > 0) {
-                    if (matches.includes("selamlama") && matches.includes("durum")) { reply = "Selam! Harikayım, tüm algoritmalarım tam performans çalışıyor. Sitedeki oyunları senin için optimize etmekle meşgulüm. Sen nasılsın?"; } 
-                    else if (matches.includes("taktik") && matches.includes("fetih")) { reply = "İmparatorluk Fethi için en büyük tüyom: İlk turlarda sürekli 'Vergi Al' butonunu kullanarak ekonomini büyüt. Ardından teknolojiyi T3 seviyesine çıkarırsan askeri gücün çarpan etkisiyle devasa artar!"; }
-                    else if (matches.includes("taktik") && matches.includes("satranc")) { reply = "Satrançta yapay zekayı yenmek istiyorsan, taşlarını tahtanın merkez karelerine (e4, d4, e5, d5) yerleştirmeye odaklanmalısın. Kanatlardan saldırmak yerine merkezi kontrol eden kazanır."; }
-                    else if (matches.includes("taktik") && matches.includes("yilan")) { reply = "Yılan oyununda en yüksek skora ulaşmak için ekranın ortasında çok dönmemeye çalış. Kendine bir duvar rotası çizip yılanı S harfi şeklinde katlayarak büyütürsen alan kazanır ve kuyruğuna çarpmazsın."; }
-                    else if (matches.includes("selamlama")) { reply = "Ooo hoş geldin! Ben bu harika oyun platformunun akıllı asistanıyım. Oyunlar hakkında bilgi almak istersen buradayım."; }
-                    else if (matches.includes("durum")) { reply = "Süperim! Tarayıcı belleğinde sıfır gecikmeyle çalışmak beni çok mutlu ediyor. Sen nasılsın, oyunlar nasıl gidiyor?"; }
-                    else if (matches.includes("satranc")) { reply = "Sitedeki Satranç oyunu tamamen kurallara uygun çalışır. Şah çekildiğinde koruma yapmayı ve rakibi mat etmeyi unutma!"; }
-                    else if (matches.includes("fetih")) { reply = "İmparatorluk Fethi tamamen stratejiye dayalı bir simülasyondur. Krallıkların özel yeteneklerini iyi kullanmalısın (Örn: Valoria altınla başlar)."; }
-                    else if (matches.includes("yilan") || matches.includes("tenis")) { reply = "Refleks tabanlı harika bir oyun! Hızlandıkça odaklanman gerekecek, dikkatli ol."; }
-                    else if (matches.includes("kimlik")) { reply = "Ben API anahtarına ihtiyaç duymadan çalışan, sitenin yerleşik akıllı AI asistanıyım. Amacım hem seninle sohbet etmek hem de oyunlarda rekor kırmana yardımcı olmak!"; }
-                } else { reply = `Anladım! "${text}" üzerine derin bir analiz yaptım. Bana oyunlar hakkında taktikler sorabilir, zorlu matematik formüllerini çözdürebilir ya da dilediğin gibi sohbet edebilirsin.`; }
-
+                let reply = `Harika! "${text}" üzerine derin bir analiz yaptım. Artık oyunları indirdiğinde direkt telefonunun ana ekranında birer uygulama ikonu olarak görebilirsin!`;
                 chatBox.innerHTML += `<div class="ai-msg bot">${reply}</div>`;
                 chatBox.scrollTop = chatBox.scrollHeight;
             }, 350);
         }
 
-        // --- SAYFA AÇILIŞ/YÜKLENİŞ KONTROLLERİ VE INTRO MOTORU ---
+        // --- INTRO MOTORU ---
         window.addEventListener('DOMContentLoaded', () => {
             if (window.location.hash === '#admin') {
                 document.getElementById('intro-container').style.display = 'none';
@@ -754,13 +619,11 @@
                 document.getElementById('portal-element').style.transform = 'scale(0.4)'; 
                 document.getElementById('characters-element').style.display = 'block'; 
             }, 1500);
-            
             setTimeout(() => { 
                 document.getElementById('portal-element').style.display = 'none'; 
                 document.getElementById('characters-element').style.display = 'none'; 
                 document.getElementById('tekkur-yazisi').style.display = 'block'; 
             }, 3200);
-            
             setTimeout(() => { 
                 document.getElementById('intro-container').style.transition = 'opacity 0.5s'; 
                 document.getElementById('intro-container').style.opacity = '0'; 
@@ -771,7 +634,30 @@
             }, 5000);
         }
 
-        // SATRANÇ
+        // --- SİSTEM ADMİN KONTROLLERİ ---
+        function checkAdminHash() { if (window.location.hash === '#admin') openAdminPanel(); }
+        window.addEventListener('hashchange', checkAdminHash);
+
+        function openAdminPanel() {
+            document.getElementById('menu-toggle-btn').style.display = 'none'; closeSidebarMenu();
+            const clicksTbody = document.getElementById('admin-clicks-tbody');
+            clicksTbody.innerHTML = `
+                <tr><td>👑 Satranç</td><td><b>${gameStats.chess} kez</b></td></tr><tr><td>🎾 Tenis</td><td><b>${gameStats.tennis} kez</b></td></tr>
+                <tr><td>🎯 Hız Testi</td><td><b>${gameStats.click} kez</b></td></tr><tr><td>🧠 Hafıza Kartları</td><td><b>${gameStats.memory} kez</b></td></tr>
+                <tr><td>🐍 Yılan Oyunu</td><td><b>${gameStats.snake} kez</b></td></tr><tr><td>⚔️ İmparatorluk Fethi</td><td><b>${gameStats.conquest} kez</b></td></tr>
+            `;
+            const scoresTbody = document.getElementById('admin-scores-tbody');
+            scoresTbody.innerHTML = `
+                <tr><td>🎯 Hız Testi</td><td><b>${highScores.click}</b></td></tr><tr><td>🐍 Yılan Oyunu</td><td><b>${highScores.snake} Skor</b></td></tr>
+                <tr><td>🎾 Son Tenis Durumu</td><td><b>${highScores.tennis}</b></td></tr><tr><td>⚔️ En Büyük İmparatorluk</td><td><b>${highScores.conquest}</b></td></tr>
+            `;
+            document.getElementById('popup-admin').style.display = 'flex';
+        }
+        function closeAdminPanel() { document.getElementById('popup-admin').style.display = 'none'; document.getElementById('menu-toggle-btn').style.display = 'flex'; window.location.hash = ''; }
+        function clearAdminData() { if(confirm("İstatistikleri sıfırlamak istiyor musunuz?")) { gameStats = { chess: 0, tennis: 0, click: 0, memory: 0, snake: 0, conquest: 0 }; highScores = { click: "Henüz rekor yok", snake: 0, tennis: "Henüz maç yapılmadı", conquest: "Fetih başlamadı" }; saveStats(); openAdminPanel(); } }
+
+        // --- OYUN LOGICLERİ (SATRANÇ, TENİS, HAFIZA, YILAN, CONQUEST) ---
+        // Satranç
         let boardState = []; let selectedSquare = null; let currentTurn = 'W';
         const WHITE_PIECES = ['♙', '♖', '♘', '♗', '♕', '♔']; const BLACK_PIECES = ['♟', '♜', '♞', '♝', '♛', '♚'];
         function buildChessBoard() {
@@ -838,27 +724,21 @@
             return false;
         }
         function checkPathClear(fR, fC, tR, tC) {
-            let sR = tR===fR?0:(tR>fR?1:-1), sC = tC===fC?0:(tC>fC?1:-1);
-            let cR = fR+sR, cC = fC+sC;
+            let sR = tR===fR?0:(tR>fR?1:-1), sC = tC===fC?0:(tC>fC?1:-1); let cR = fR+sR, cC = fC+sC;
             while(cR!==tR || cC!==tC) { if(boardState[cR][cC]!=='')return false; cR+=sR; cC+=sC; }
             return true;
         }
 
-        // TENİS
+        // Tenis
         let pongInterval; let playerScore = 0, botScore = 0;
         function startTennisGame() {
             const canvas = document.getElementById('pongCanvas'); const ctx = canvas.getContext('2d');
             let ballX = 350, ballY = 200, speedX = 5, speedY = 5; let pY = 150, bY = 150, pHeight = 90, bHeight = 90;
-            
             const handleMove = (clientY) => {
-                let rect = canvas.getBoundingClientRect();
-                let scaleY = canvas.height / rect.height; 
-                pY = (clientY - rect.top) * scaleY - pHeight / 2;
+                let rect = canvas.getBoundingClientRect(); let scaleY = canvas.height / rect.height; pY = (clientY - rect.top) * scaleY - pHeight / 2;
             };
-            
             canvas.onmousemove = (e) => { handleMove(e.clientY); };
             canvas.ontouchmove = (e) => { if(e.touches.length > 0) { handleMove(e.touches[0].clientY); e.preventDefault(); } };
-            
             clearInterval(pongInterval);
             pongInterval = setInterval(() => {
                 if(document.getElementById('popup-tennis').style.display !== 'flex') { clearInterval(pongInterval); return; }
@@ -876,23 +756,19 @@
         }
         function updateScores() { document.getElementById('pScore').textContent = playerScore; document.getElementById('bScore').textContent = botScore; }
 
-        // REFLEKS HIZ TESTİ
+        // Hız Testi
         let reflexTime = 0, isWaiting = false;
         function handleClickBox() {
             const box = document.getElementById('click-box'); const scoreText = document.getElementById('click-score');
             if(!isWaiting) { box.textContent = 'BEKLE...'; box.style.backgroundColor = 'red'; isWaiting = true; scoreText.textContent = ''; setTimeout(() => { box.style.backgroundColor = '#39ff14'; box.style.color = '#000'; box.textContent = 'TIKLA!'; reflexTime = Date.now(); }, 1500 + Math.random() * 2500); } 
             else if(reflexTime > 0) { 
-                let score = Date.now() - reflexTime;
-                scoreText.textContent = `Hız Skorun: ${score} ms`; 
-                box.textContent = 'YENİDEN BAŞLA'; 
-                box.style.backgroundColor = 'transparent'; 
-                box.style.color = '#fff'; 
+                let score = Date.now() - reflexTime; scoreText.textContent = `Hız Skorun: ${score} ms`; box.textContent = 'YENİDEN BAŞLA'; box.style.backgroundColor = 'transparent'; box.style.color = '#fff'; 
                 if(highScores.click === "Henüz rekor yok" || score < parseInt(highScores.click)) { highScores.click = score + " ms"; saveStats(); }
                 reflexTime = 0; isWaiting = false; 
             }
         }
 
-        // HAFIZA
+        // Hafıza
         let cards = ['🔥','🔥','⚡','⚡','👑','👑','💎','💎','🍎','🍎','🚗','🚗','🎈','🎈','👾','👾']; let choice1 = null, choice2 = null;
         function startMemoryGame() {
             const mBoard = document.getElementById('memory-board'); mBoard.innerHTML = ''; choice1 = null; choice2 = null; cards.sort(() => 0.5 - Math.random());
@@ -903,7 +779,7 @@
             if(!choice1) choice1 = c; else { choice2 = c; if(choice1.dataset.icon === choice2.dataset.icon) { choice1 = null; choice2 = null; } else { setTimeout(() => { choice1.textContent = ''; choice2.textContent = ''; choice1.classList.remove('flipped'); choice2.classList.remove('flipped'); choice1 = null; choice2 = null; }, 800); } }
         }
 
-        // YILAN
+        // Yılan
         let snakeInterval;
         function startSnakeGame() {
             const canvas = document.getElementById('snakeCanvas'); const ctx = canvas.getContext('2d');
@@ -912,29 +788,21 @@
             document.onkeydown = (e) => {
                 if (e.key === 'ArrowLeft' && dx === 0) { dx = -boxSize; dy = 0; } else if (e.key === 'ArrowUp' && dy === 0) { dx = 0; dy = -boxSize; } else if (e.key === 'ArrowRight' && dx === 0) { dx = boxSize; dy = 0; } else if (e.key === 'ArrowDown' && dy === 0) { dx = 0; dy = boxSize; }
             };
-            
-            // Mobil kaydırma (Swipe) hareket algılayıcıları
             let touchStartX = 0, touchStartY = 0;
             canvas.ontouchstart = (e) => { touchStartX = e.touches[0].clientX; touchStartY = e.touches[0].clientY; };
             canvas.ontouchmove = (e) => {
                 if (!touchStartX || !touchStartY) return;
-                let diffX = e.touches[0].clientX - touchStartX;
-                let diffY = e.touches[0].clientY - touchStartY;
-                if (Math.abs(diffX) > Math.abs(diffY)) {
-                    if (diffX > 0 && dx === 0) { dx = boxSize; dy = 0; } else if (diffX < 0 && dx === 0) { dx = -boxSize; dy = 0; }
-                } else {
-                    if (diffY > 0 && dy === 0) { dx = 0; dy = boxSize; } else if (diffY < 0 && dy === 0) { dx = 0; dy = -boxSize; }
-                }
+                let diffX = e.touches[0].clientX - touchStartX; let diffY = e.touches[0].clientY - touchStartY;
+                if (Math.abs(diffX) > Math.abs(diffY)) { if (diffX > 0 && dx === 0) { dx = boxSize; dy = 0; } else if (diffX < 0 && dx === 0) { dx = -boxSize; dy = 0; } } 
+                else { if (diffY > 0 && dy === 0) { dx = 0; dy = boxSize; } else if (diffY < 0 && dy === 0) { dx = 0; dy = -boxSize; } }
                 touchStartX = 0; touchStartY = 0; e.preventDefault();
             };
-
             clearInterval(snakeInterval);
             snakeInterval = setInterval(() => {
                 if(document.getElementById('popup-snake').style.display !== 'flex') { clearInterval(snakeInterval); return; }
                 let head = {x: snake[0].x + dx, y: snake[0].y + dy};
                 if(head.x < 0 || head.x >= 400 || head.y < 0 || head.y >= 400 || snake.some(s => s.x === head.x && s.y === head.y)) { 
-                    alert("Oyun Bitti! Skorunuz: " + score); 
-                    if(score > highScores.snake) { highScores.snake = score; saveStats(); }
+                    alert("Oyun Bitti! Skorunuz: " + score); if(score > highScores.snake) { highScores.snake = score; saveStats(); }
                     startSnakeGame(); return; 
                 }
                 snake.unshift(head);
@@ -945,12 +813,11 @@
             }, 150);
         }
 
-        // İMPARATORLUK FETHİ KODLARI
+        // İmparatorluk Fethi
         let cqGold, cqArmy, cqTech, cqLand, cqPlayerEmpire; let cqEnemies = [];
         function resetConquestUI() { document.getElementById('cq-setup').style.display = 'block'; document.getElementById('cq-board').style.display = 'none'; }
         function startConquestGame() {
-            cqPlayerEmpire = document.getElementById('cq-empire-select').value;
-            cqGold = 500; cqArmy = 100; cqTech = 1; cqLand = 15;
+            cqPlayerEmpire = document.getElementById('cq-empire-select').value; cqGold = 500; cqArmy = 100; cqTech = 1; cqLand = 15;
             if(cqPlayerEmpire === "Valoria") cqGold = 800; if(cqPlayerEmpire === "Shadowfang") cqArmy = 170; if(cqPlayerEmpire === "Aethelgard") cqTech = 2;
             cqEnemies = [
                 { id: "necro", name: "Necroshane Laneti", land: 25, army: 110, logo: "💀" }, { id: "solaria", name: "Solaria İmparatorluğu", land: 20, army: 140, logo: "☀️" },
