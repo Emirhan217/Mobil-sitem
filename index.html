@@ -141,8 +141,8 @@
         .close-btn:hover { transform: scale(1.1); color: #ff6b81; }
 
         /* Satranç */
-        #chess-board { display: grid; grid-template-columns: repeat(8, 55px); grid-template-rows: repeat(8, 55px); border: 5px solid #bc13fe; box-shadow: 0 0 30px rgba(188, 19, 254, 0.4); }
-        .square { width: 55px; height: 55px; display: flex; align-items: center; justify-content: center; font-size: 38px; cursor: pointer; user-select: none; }
+        #chess-board { display: grid; grid-template-columns: repeat(8, 48px); grid-template-rows: repeat(8, 48px); border: 5px solid #bc13fe; box-shadow: 0 0 30px rgba(188, 19, 254, 0.4); user-select: none; -webkit-user-select: none; }
+        .square { width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; font-size: 34px; cursor: pointer; -webkit-tap-highlight-color: transparent; }
         .white { background-color: #f0d9b5; color: #000; }
         .black { background-color: #b58863; color: #000; }
         .selected { background-color: #39ff14 !important; box-shadow: inset 0 0 12px rgba(0,0,0,0.6); }
@@ -277,7 +277,6 @@
             }
         };
 
-        // LocalStorage taraması ile kayıtlı yüklenenleri çekme
         let magazadanYuklenenler = JSON.parse(localStorage.getItem('magazadanYuklenenler')) || [];
 
         function updateUIVisuals() {
@@ -285,7 +284,6 @@
             const storeArea = document.getElementById('store-games-area');
             mainArea.innerHTML = '';
             
-            // 1. Sabit oyunları bas
             Object.keys(SABIT_OYUNLAR).forEach(gameId => {
                 const game = SABIT_OYUNLAR[gameId];
                 mainArea.innerHTML += `
@@ -297,7 +295,6 @@
                     </div>`;
             });
 
-            // 2. Mağazadan yüklenmiş olanları ana listeye ekle
             magazadanYuklenenler.forEach(gameId => {
                 const game = MAĞAZA_OYUNLARI[gameId];
                 if(game) {
@@ -311,7 +308,6 @@
                 }
             });
 
-            // 3. Mağazayı Çiz
             storeArea.innerHTML = '';
             Object.keys(MAĞAZA_OYUNLARI).forEach(gameId => {
                 const game = MAĞAZA_OYUNLARI[gameId];
@@ -357,7 +353,6 @@
             alert("Oyun başarıyla yeniden yüklendi ve cihazınıza indirildi!");
         }
 
-        // TAMAMEN ÇALIŞAN STANDALONE (BAĞIMSIZ) OYUN PAKETLEYİCİSİ
         function downloadGameStandalone(gameId) {
             if(gameId !== 'conquest') return;
 
@@ -474,10 +469,8 @@
             link.click();
         }
 
-        // İlk açılışta kartları listele
         updateUIVisuals();
 
-        // --- POPUP KONTROLLERİ ---
         function openGame(gameName) {
             document.getElementById('popup-' + gameName).style.display = 'flex';
             if(gameName === 'chess') buildChessBoard();
@@ -488,7 +481,7 @@
         }
         function closeGame(gameName) { document.getElementById('popup-' + gameName).style.display = 'none'; }
 
-        // --- STRATEJİ OYUNU ARKA PLAN KODLARI (SİTE İÇİ) ---
+        // --- STRATEJİ OYUNU ARKA PLAN KODLARI ---
         let cqGold, cqArmy, cqTech, cqLand, cqPlayerEmpire;
         let cqEnemies = [];
         
@@ -583,9 +576,9 @@
         setTimeout(() => { document.getElementById('portal-element').style.display = 'none'; document.getElementById('characters-element').style.display = 'none'; document.getElementById('tekkur-yazisi').style.display = 'block'; }, 3200);
         setTimeout(() => { document.getElementById('intro-container').style.transition = 'opacity 0.8s'; document.getElementById('intro-container').style.opacity = '0'; setTimeout(() => { document.getElementById('intro-container').style.display = 'none'; }, 800); }, 6000);
 
-        // --- TAMAMEN YENİLENMİŞ VE HATASIZ SATRANÇ SİSTEMİ ---
+        // --- MOBİL UYUMLU VE SAF JAVASCRIPT SATRANÇ SİSTEMİ ---
         let boardState = []; 
-        let selectedSquare = null; // {r: sayı, c: sayı} tipinde tutulacak
+        let selectedSquare = null; 
 
         function buildChessBoard() {
             selectedSquare = null;
@@ -612,38 +605,34 @@
                     sq.className = `square ${(r+c)%2===0?'white':'black'}`; 
                     sq.textContent = boardState[r][c];
                     
-                    // Eğer bu kare şu an seçili kareyse yeşil yap
                     if(selectedSquare && selectedSquare.r === r && selectedSquare.c === c) {
                         sq.classList.add('selected');
                     }
                     
-                    sq.onclick = () => handleSquareClick(r, c);
+                    // Hem masaüstü klik hem mobil dokunmatik koruması eklendi
+                    sq.onclick = (e) => {
+                        e.preventDefault();
+                        handleSquareClick(r, c);
+                    };
                     board.appendChild(sq);
                 }
             }
         }
 
         function handleSquareClick(r, c) {
-            // Durum 1: Henüz hiçbir taş seçilmediyse
             if (selectedSquare === null) {
-                // Tıklanan karede bir taş varsa onu seç
                 if (boardState[r][c] !== '') {
                     selectedSquare = { r: r, c: c };
                 }
-            } 
-            // Durum 2: Zaten seçili bir taş varken başka bir yere tıklandıysa
-            else {
-                // Eğer oyuncu aynı taşa tekrar tıkladıysa seçimi iptal et
+            } else {
                 if (selectedSquare.r === r && selectedSquare.c === c) {
                     selectedSquare = null;
                 } else {
-                    // Taşı yeni kareye taşı (ve oradaki taşı ye)
                     boardState[r][c] = boardState[selectedSquare.r][selectedSquare.c];
                     boardState[selectedSquare.r][selectedSquare.c] = '';
                     selectedSquare = null;
                 }
             }
-            // Görseli güncelle
             drawGrid();
         }
 
