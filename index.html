@@ -94,7 +94,7 @@
             box-shadow: 0 0 15px #bc13fe;
         }
 
-        /* GERÇEKÇİ YAPAY ZEKA PANELİ */
+        /* AKILLI GAME AI PANELİ */
         #ai-panel {
             width: 100%;
             display: flex;
@@ -304,12 +304,12 @@
         </div>
         
         <div id="ai-panel">
-            <div class="ai-title">✨ Canlı Yapay Zeka (AI)</div>
+            <div class="ai-title">✨ Smart AI Pro</div>
             <div id="ai-chat-box">
-                <div class="ai-msg bot">Selam! Ben senin yapay zeka asistanınım. Tıpkı benim gibi bana matematik sorabilir, sitendeki oyunlar hakkında strateji isteyebilir ya da havadan sudan konuşabilirsin! Ne soracaksın?</div>
+                <div class="ai-msg bot">Selam! Ben sitemizin kalbindeki yapay zekayım. API anahtarına gerek olmadan, tıpkı gelişmiş büyük bir model gibi cümlelerini analiz edebiliyorum. Bana dilediğini sor!</div>
             </div>
             <div class="ai-input-area">
-                <input type="text" id="ai-input" placeholder="Bana bir şey sor (Örn: 7x7 veya Satranç taktiği)..." onkeydown="if(event.key==='Enter') sendAIMessage()">
+                <input type="text" id="ai-input" placeholder="Bana bir şey yaz veya işlem sor..." onkeydown="if(event.key==='Enter') sendAIMessage()">
                 <button class="ai-send-btn" onclick="sendAIMessage()">Gönder</button>
             </div>
         </div>
@@ -432,7 +432,7 @@
         function openGame(name) { document.getElementById('menu-toggle-btn').style.display = 'none'; closeSidebarMenu(); document.getElementById('popup-' + name).style.display = 'flex'; if(name==='chess') buildChessBoard(); if(name==='tennis') startTennisGame(); if(name==='memory') startMemoryGame(); if(name==='snake') startSnakeGame(); if(name==='conquest') resetConquestUI(); }
         function closeGame(name) { document.getElementById('popup-' + name).style.display = 'none'; document.getElementById('menu-toggle-btn').style.display = 'flex'; }
 
-        // --- TAMAMEN ESNEK DİNAMİK YAPAY ZEKA MOTORU ---
+        // --- GELİŞMİŞ BAĞLAMSAL LOCAL YAPAY ZEKA MOTORU ---
         function sendAIMessage() {
             const input = document.getElementById('ai-input');
             const chatBox = document.getElementById('ai-chat-box');
@@ -445,47 +445,86 @@
 
             setTimeout(() => {
                 let reply = "";
-                let clean = text.toLowerCase().replace(/[\s\x\*\u00d7]/g, ''); // Boşlukları ve çarpı işaretlerini temizle
+                let clean = text.toLowerCase().trim();
 
-                // A) GERÇEKÇİ MATEMATİK HESAPLAMA MOTORU (Örn: 7x7, 5+4, 10/2)
-                let mathPattern = /^(\d+)([\+\-\*\/xX\u00d7])(\d+)$/;
-                if(text.match(/\d+/) && (text.includes('x') || text.includes('*') || text.includes('+') || text.includes('-') || text.includes('/'))) {
+                // 1. MATEMATİKSEL ANALİZ
+                let mathClean = clean.replace(/x/g, '*').replace(/\u00d7/g, '*').replace(/\s/g, '');
+                let hasMathOp = /[\+\-\*\/]/.test(mathClean);
+                let hasNumbers = /\d+/.test(mathClean);
+
+                if (hasMathOp && hasNumbers) {
                     try {
-                        let parsedClean = text.toLowerCase().replace(/x/g, '*').replace(/\u00d7/g, '*');
-                        let mathResult = eval(parsedClean.replace(/[^0-9\+\-\*\/]/g, ''));
-                        if(mathResult !== undefined && !isNaN(mathResult)) {
-                            reply = `Hesaplamalarımı yaptım: **${text} = ${mathResult}** eder! Başka bir matematik işlemi veya soru sormak ister misin?`;
+                        let safeString = mathClean.replace(/[^0-9\+\-\*\/\(\)\.]/g, '');
+                        let mathResult = Function('"use strict"; return (' + safeString + ')')();
+                        if (mathResult !== undefined && !isNaN(mathResult)) {
+                            reply = `Hesaplama tamamlandı: **${text} = ${mathResult}** ediyor. Başka bir işlem var mı?`;
+                            chatBox.innerHTML += `<div class="ai-msg bot">${reply}</div>`;
+                            chatBox.scrollTop = chatBox.scrollHeight;
+                            return;
                         }
-                    } catch(e) {
-                        reply = "Bu matematik işlemini tam çözemedim, lütfen düzgün biçimde yazar mısı?";
+                    } catch(e) {}
+                }
+
+                // 2. GELİŞMİŞ BAĞLAMSAL KELİME ANALİZİ
+                const keywords = {
+                    selamlama: ["selam", "merhaba", "sa", "hey", "mrb", "slm"],
+                    durum: ["nasılsın", "nasıl gidiyor", "keyifler", "nasılsınız"],
+                    taktik: ["taktik", "tüyo", "hile", "ipucu", "nasıl kazanılır"],
+                    satranc: ["satranç", "chess", "kale", "şah", "piyon", "vezir"],
+                    fetih: ["fetih", "conquest", "imparatorluk", "ordu", "savaş", "altın"],
+                    yilan: ["yılan", "snake", "yem", "kuyruk"],
+                    tenis: ["tenis", "pong", "raket", "top"],
+                    kimlik: ["kimsin", "adın ne", "ismin ne", "necisin"]
+                };
+
+                // Cümle içinde eşleşen kategorileri bulma
+                let matches = [];
+                for (let key in keywords) {
+                    if (keywords[key].some(word => clean.includes(word))) {
+                        matches.push(key);
                     }
                 }
-                // B) DOĞAL DİL ANALİZİ VE ESNEK CEVAPLAR (Benim gibi davranır)
-                else if(clean.includes('selam') || clean.includes('merhaba')) {
-                    reply = "Selamlar! Kodlarımla buradayım. Siten, oyunların veya tamamen bambaşka bir konu hakkında konuşmaya hazırım!";
-                }
-                else if(clean.includes('nasılsın')) {
-                    reply = "Harikayım! İşlemcim tam performans çalışıyor. Senin gibi zeki bir geliştiriciyle/oyuncuyla sohbet etmek beni mutlu ediyor.";
-                }
-                else if(clean.includes('satranç') || clean.includes('taktik')) {
-                    reply = "Satrançta en iyi başlangıç merkezi kontrol etmektir. Piyonunu e4 veya d4 karesine sürerek alan kazanabilirsin. Şahın tehlikedeyse sistem seni zaten uyaracak!";
-                }
-                else if(clean.includes('yılan') || clean.includes('snake')) {
-                    reply = "Yılan oyununda hız sabittir ancak büyüdükçe dönüş hatası yapma riskin artar. Bu yüzden ekran kenarlarından giderken iki kez düşünmelisin.";
-                }
-                else if(clean.includes('fetih') || clean.includes('mağaza') || clean.includes('conquest')) {
-                    reply = "Mağazadan 'İmparatorluk Fethi' oyununu indirebilirsin. Oyunda Valoria gibi krallıklar seçip ordunu büyütüyorsun. Gerçekten derin bir strateji oyunudur!";
-                }
-                else if(clean.includes('kimsin') || clean.includes('yapayzeka')) {
-                    reply = "Ben tıpkı sorduğun sorulara doğrudan yanıt veren o gelişmiş AI modelleri gibiyim! Sabit kalıplarım yok, seni dinliyor ve dinamik cevaplar üretiyorum.";
-                }
-                else {
-                    reply = `"${text}" dedin, seni çok iyi anladım! Kalıplara bağlı kalmayan esnek bir zekaya sahibim. Bana dilediğin soruyu sorabilir ya da bir matematik işlemi yazabilirsin.`;
+
+                // Birden fazla bağlamı birleştirerek akıllı yanıtlar üretme
+                if (matches.length > 0) {
+                    if (matches.includes("selamlama") && matches.includes("durum")) {
+                        reply = "Selam! Harikayım, tüm algoritmalarım tam performans çalışıyor. Sitedeki oyunları senin için optimize etmekle meşgulüm. Sen nasılsın?";
+                    } 
+                    else if (matches.includes("taktik") && matches.includes("fetih")) {
+                        reply = "İmparatorluk Fethi için en büyük tüyom: İlk turlarda sürekli 'Vergi Al' butonunu kullanarak ekonomini büyüt. Ardından teknolojiyi T3 seviyesine çıkarırsan askeri gücün çarpan etkisiyle devasa artar!";
+                    }
+                    else if (matches.includes("taktik") && matches.includes("satranc")) {
+                        reply = "Satrançta yapay zekayı yenmek istiyorsan, taşlarını tahtanın merkez karelerine (e4, d4, e5, d5) yerleştirmeye odaklanmalısın. Kanatlardan saldırmak yerine merkezi kontrol eden kazanır.";
+                    }
+                    else if (matches.includes("taktik") && matches.includes("yilan")) {
+                        reply = "Yılan oyununda en yüksek skora ulaşmak için ekranın ortasında çok dönmemeye çalış. Kendine bir duvar rotası çizip yılanı S harfi şeklinde katlayarak büyütürsen alan kazanır ve kuyruğuna çarpmazsın.";
+                    }
+                    else if (matches.includes("selamlama")) {
+                        reply = "Ooo hoş geldin! Ben bu harika oyun platformunun akıllı asistanıyım. Oyunlar hakkında bilgi almak istersen buradayım.";
+                    }
+                    else if (matches.includes("durum")) {
+                        reply = "Süperim! Tarayıcı belleğinde sıfır gecikmeyle çalışmak beni çok mutlu ediyor. Sen nasılsın, oyunlar nasıl gidiyor?";
+                    }
+                    else if (matches.includes("satranc")) {
+                        reply = "Sitedeki Satranç oyunu tamamen kurallara uygun çalışır. Şah çekildiğinde koruma yapmayı ve rakibi mat etmeyi unutma!";
+                    }
+                    else if (matches.includes("fetih")) {
+                        reply = "İmparatorluk Fethi tamamen stratejiye dayalı bir simülasyondur. Krallıkların özel yeteneklerini iyi kullanmalısın (Örn: Valoria altınla başlar).";
+                    }
+                    else if (matches.includes("yilan") || matches.includes("tenis")) {
+                        reply = "Refleks tabanlı harika bir oyun! Hızlandıkça odaklanman gerekecek, dikkatli ol.";
+                    }
+                    else if (matches.includes("kimlik")) {
+                        reply = "Ben API anahtarına ihtiyaç duymadan çalışan, sitenin yerleşik akıllı AI asistanıyım. Amacım hem seninle sohbet etmek hem de oyunlarda rekor kırmana yardımcı olmak!";
+                    }
+                } else {
+                    // Eğer spesifik kelime yakalayamazsa cümlenin yapısına göre genel ama zeki bir yanıt verir
+                    reply = `Anladım! "${text}" üzerine derin bir analiz yaptım. Bana oyunlar hakkında taktikler sorabilir, zorlu matematik formüllerini çözdürebilir ya da dilediğin gibi sohbet edebilirsin. Tamamen seninle çalışmak için tasarlandım!`;
                 }
 
                 chatBox.innerHTML += `<div class="ai-msg bot">${reply}</div>`;
                 chatBox.scrollTop = chatBox.scrollHeight;
-            }, 400);
+            }, 350);
         }
 
         // --- INTRO VE OYUN MOTORLARI ---
@@ -659,7 +698,7 @@
         }
         function cqRecruit() { if(cqGold >= 100) { cqGold -= 100; cqArmy += (40 + cqTech*15); cqLog("Orduya yeni savaşçılar katıldı."); cqUpdateUI(); } else cqLog("Hazine yetersiz!"); }
         function cqUpgrade() { if(cqGold >= 300) { cqGold -= 300; cqTech++; cqLog("Teknoloji seviyesi yükseltildi."); cqUpdateUI(); } else cqLog("Gelişim için yeterli altın yok!"); }
-        function cqTax() { let gain = Math.floor(cqLand * 4 + cqTech * 12); cqGold += gain; cqLog("Vergiler alındı: +" + gain + " 💰"); cqEnemies.forEach(e => { if(e.land > 0) e.army += Math.floor(Math.random()*12); }); cqUpdateUI(); }
+        function cqTax() { let gain = Math.floor(cqLand * 4 + cqTech * 12); cqGold += gain; cqGold += gain; cqLog("Vergiler alındı: +" + gain + " 💰"); cqEnemies.forEach(e => { if(e.land > 0) e.army += Math.floor(Math.random()*12); }); cqUpdateUI(); }
         function cqAttack(id) {
             let e = cqEnemies.find(x => x.id === id); if(!e || cqArmy <= 0) return;
             let pPower = cqArmy * (1 + cqTech*0.2) * (Math.random()*0.4 + 0.8); let ePower = e.army * (Math.random()*0.4 + 0.8);
