@@ -250,17 +250,6 @@
         }
         .close-btn { position: absolute; top: 15px; right: 20px; font-size: 40px; color: #ff4757; cursor: pointer; z-index: 10001; }
 
-        /* MOBİL - TAM EKRA OYUN ÖLÇEKLENDİRMELERİ */
-        .game-wrapper {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            max-width: 100%;
-            max-height: 90vh;
-            transform-origin: center center;
-        }
-
         /* Satranç */
         #chess-board { display: grid; grid-template-columns: repeat(8, 1fr); grid-template-rows: repeat(8, 1fr); width: min(85vw, 380px); height: min(85vw, 380px); border: 4px solid #bc13fe; box-shadow: 0 0 20px rgba(188, 19, 254, 0.4); }
         .square { display: flex; align-items: center; justify-content: center; font-size: clamp(20px, 6vw, 32px); cursor: pointer; user-select: none; }
@@ -281,10 +270,20 @@
 
         /* Yılan */
         canvas#snakeCanvas { width: min(85vw, 360px); height: min(85vw, 360px); border: 3px solid #ff9f43; background: #0d0d13; }
-
-        /* Mobil Yılan Kontrolleri */
         .mobile-controls { display: none; margin-top: 15px; grid-template-columns: repeat(3, 50px); gap: 8px; justify-content: center; }
         .ctrl-btn { width: 50px; height: 50px; background: #141420; border: 2px solid #39ff14; color: #fff; font-size: 20px; border-radius: 10px; display: flex; align-items: center; justify-content: center; user-select: none; }
+
+        /* XOX (Tic Tac Toe) */
+        #tictactoe-board { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: min(85vw, 300px); height: min(85vw, 300px); margin-top: 15px; }
+        .ttt-square { background: #141420; border: 2px solid #bc13fe; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: clamp(32px, 10vw, 55px); font-weight: bold; cursor: pointer; user-select: none; color: #39ff14; }
+
+        /* Taş Kağıt Makas */
+        .rps-options { display: flex; gap: 15px; margin-top: 20px; flex-wrap: wrap; justify-content: center; }
+        .rps-btn { width: min(25vw, 90px); height: min(25vw, 90px); background: #141420; border: 2px solid #00f2ff; border-radius: 50%; font-size: 35px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
+        .rps-btn:active { transform: scale(0.9); }
+
+        /* Tuğla Kırma */
+        canvas#brickCanvas { width: min(92vw, 500px); height: min(70vw, 380px); border: 2px solid #bc13fe; background: #050508; border-radius: 10px; }
 
         /* İmparatorluk Fethi */
         .conquest-container { width: min(95vw, 650px); max-height: 85vh; overflow-y: auto; background: #1f2833; border: 2px solid #00f2ff; border-radius: 16px; padding: 15px; box-sizing: border-box; }
@@ -418,6 +417,33 @@
         <div id="cup-status" style="margin-top: 15px; font-size: 18px; font-weight: bold; color: #fff; min-height: 30px;">Sıra: Oyuncu 1</div>
     </div>
 
+    <div id="popup-tictactoe" class="game-popup">
+        <span class="close-btn" onclick="closeGame('tictactoe')">&times;</span>
+        <h2 style="color: #bc13fe; margin: 5px;">XOX (Tic Tac Toe)</h2>
+        <div id="ttt-status" style="color: #39ff14; font-size: 18px; font-weight: bold; margin-bottom: 10px;">Sıra: X</div>
+        <div id="tictactoe-board"></div>
+        <button class="game-btn" style="margin-top: 15px; width: auto; padding: 8px 20px;" onclick="startTicTacToe()">Yeniden Başlat</button>
+    </div>
+
+    <div id="popup-rps" class="game-popup">
+        <span class="close-btn" onclick="closeGame('rps')">&times;</span>
+        <h2 style="color: #00f2ff; margin: 5px;">Taş Kağıt Makas</h2>
+        <div style="font-size: 18px; margin: 10px 0;">Siz: <span id="rpsUserScore">0</span> | Bot: <span id="rpsBotScore">0</span></div>
+        <div id="rps-result" style="font-size: 20px; font-weight: bold; min-height: 30px; color: #39ff14; margin-bottom: 15px;">Hamleni Seç!</div>
+        <div class="rps-options">
+            <button class="rps-btn" onclick="playRPS('🪨')">🪨</button>
+            <button class="rps-btn" onclick="playRPS('📄')">📄</button>
+            <button class="rps-btn" onclick="playRPS('✂️')">✂️</button>
+        </div>
+    </div>
+
+    <div id="popup-brick" class="game-popup">
+        <span class="close-btn" onclick="closeGame('brick')">&times;</span>
+        <h2 style="color: #bc13fe; margin: 5px;">Tuğla Kırma</h2>
+        <div style="font-size: 18px; margin-bottom: 5px;">Skor: <span id="brickScore">0</span></div>
+        <canvas id="brickCanvas" width="500" height="380"></canvas>
+    </div>
+
     <div id="popup-conquest" class="game-popup">
         <span class="close-btn" onclick="closeGame('conquest')">&times;</span>
         <div class="conquest-container">
@@ -480,8 +506,8 @@
         setAppHeight();
 
         // LOCALSTORAGE VE İSTATİSTİKLER
-        let gameStats = JSON.parse(localStorage.getItem('gameStats')) || { chess: 0, tennis: 0, click: 0, memory: 0, snake: 0, conquest: 0, cup: 0 };
-        let highScores = JSON.parse(localStorage.getItem('highScores')) || { click: "Henüz rekor yok", snake: 0, tennis: "Henüz maç yapılmadı", conquest: "Fetih başlamadı" };
+        let gameStats = JSON.parse(localStorage.getItem('gameStats')) || { chess: 0, tennis: 0, click: 0, memory: 0, snake: 0, conquest: 0, cup: 0, tictactoe: 0, rps: 0, brick: 0 };
+        let highScores = JSON.parse(localStorage.getItem('highScores')) || { click: "Henüz rekor yok", snake: 0, tennis: "Henüz maç yapılmadı", conquest: "Fetih başlamadı", brick: 0 };
 
         function saveStats() {
             localStorage.setItem('gameStats', JSON.stringify(gameStats));
@@ -496,17 +522,21 @@
             document.getElementById('menu-toggle-btn').style.display = 'none';
             closeSidebarMenu();
             document.getElementById('admin-clicks-tbody').innerHTML = `
-                <tr><td>👑 Satranç</td><td><b>${gameStats.chess}</b></td></tr>
-                <tr><td>🎾 Tenis</td><td><b>${gameStats.tennis}</b></td></tr>
-                <tr><td>🎯 Hız Testi</td><td><b>${gameStats.click}</b></td></tr>
-                <tr><td>🧠 Hafıza Kartları</td><td><b>${gameStats.memory}</b></td></tr>
-                <tr><td>🐍 Yılan Oyunu</td><td><b>${gameStats.snake}</b></td></tr>
-                <tr><td>⚔️ İmparatorluk Fethi</td><td><b>${gameStats.conquest}</b></td></tr>
-                <tr><td>💧 Bardağı Taşırma</td><td><b>${gameStats.cup}</b></td></tr>
+                <tr><td>👑 Satranç</td><td><b>${gameStats.chess || 0}</b></td></tr>
+                <tr><td>🎾 Tenis</td><td><b>${gameStats.tennis || 0}</b></td></tr>
+                <tr><td>🎯 Hız Testi</td><td><b>${gameStats.click || 0}</b></td></tr>
+                <tr><td>🧠 Hafıza Kartları</td><td><b>${gameStats.memory || 0}</b></td></tr>
+                <tr><td>🐍 Yılan Oyunu</td><td><b>${gameStats.snake || 0}</b></td></tr>
+                <tr><td>💧 Bardağı Taşırma</td><td><b>${gameStats.cup || 0}</b></td></tr>
+                <tr><td>❌ XOX Oyunu</td><td><b>${gameStats.tictactoe || 0}</b></td></tr>
+                <tr><td>✂️ Taş Kağıt Makas</td><td><b>${gameStats.rps || 0}</b></td></tr>
+                <tr><td>🧱 Tuğla Kırma</td><td><b>${gameStats.brick || 0}</b></td></tr>
+                <tr><td>⚔️ İmparatorluk Fethi</td><td><b>${gameStats.conquest || 0}</b></td></tr>
             `;
             document.getElementById('admin-scores-tbody').innerHTML = `
                 <tr><td>🎯 Hız Testi</td><td><b>${highScores.click}</b></td></tr>
                 <tr><td>🐍 Yılan Rekoru</td><td><b>${highScores.snake}</b></td></tr>
+                <tr><td>🧱 Tuğla Rekoru</td><td><b>${highScores.brick || 0}</b></td></tr>
                 <tr><td>🎾 Son Tenis</td><td><b>${highScores.tennis}</b></td></tr>
                 <tr><td>⚔️ Fetih Durumu</td><td><b>${highScores.conquest}</b></td></tr>
             `;
@@ -521,8 +551,8 @@
 
         function clearAdminData() {
             if(confirm("Tüm veriler sıfırlansın mı?")) {
-                gameStats = { chess: 0, tennis: 0, click: 0, memory: 0, snake: 0, conquest: 0, cup: 0 };
-                highScores = { click: "Henüz rekor yok", snake: 0, tennis: "Henüz maç yapılmadı", conquest: "Fetih başlamadı" };
+                gameStats = { chess: 0, tennis: 0, click: 0, memory: 0, snake: 0, conquest: 0, cup: 0, tictactoe: 0, rps: 0, brick: 0 };
+                highScores = { click: "Henüz rekor yok", snake: 0, tennis: "Henüz maç yapılmadı", conquest: "Fetih başlamadı", brick: 0 };
                 saveStats(); openAdminPanel();
             }
         }
@@ -536,7 +566,10 @@
             click: { id: 'click', logo: '🎯', title: 'Hız Testi', desc: 'Doğru renge basarak hız rekorunu kır.' },
             memory: { id: 'memory', logo: '🧠', title: 'Hafıza', desc: 'Kartları eşleştir zihnini test et.' },
             snake: { id: 'snake', logo: '🐍', title: 'Yılan Oyunu', desc: 'Yemleri ye, kuyruğuna çarpmadan büyüyün.' },
-            cup: { id: 'cup', logo: '💧', title: 'Bardağı Taşırma', desc: 'Suyu dikkatli doldur, taşıran oyuncu kaybeder!' }
+            cup: { id: 'cup', logo: '💧', title: 'Bardağı Taşırma', desc: 'Suyu dikkatli doldur, taşıran oyuncu kaybeder!' },
+            tictactoe: { id: 'tictactoe', logo: '❌', title: 'XOX Oyunu', desc: 'Arkadaşınla veya botla XOX oyna!' },
+            rps: { id: 'rps', logo: '✂️', title: 'Taş Kağıt Makas', desc: 'Bilgisayara karşı hamleni yap ve kazan!' },
+            brick: { id: 'brick', logo: '🧱', title: 'Tuğla Kırma', desc: 'Topu düşürmeden tüm tuğlaları yok et!' }
         };
         const MAĞAZA_OYUNLARI = { conquest: { id: 'conquest', logo: '⚔️', title: 'İmparatorluk Fethi', desc: 'Stratejik fetih ve yönetim simülasyonu.' } };
         let magazadanYuklenenler = JSON.parse(localStorage.getItem('magazadanYuklenenler')) || [];
@@ -577,6 +610,9 @@
             if(name==='snake') startSnakeGame(); 
             if(name==='conquest') resetConquestUI(); 
             if(name==='cup') startCupGame();
+            if(name==='tictactoe') startTicTacToe();
+            if(name==='rps') resetRPS();
+            if(name==='brick') startBrickGame();
         }
         function closeGame(name) { document.getElementById('popup-' + name).style.display = 'none'; document.getElementById('menu-toggle-btn').style.display = 'flex'; }
 
@@ -585,7 +621,7 @@
         setTimeout(() => { document.getElementById('portal-element').style.display = 'none'; document.getElementById('characters-element').style.display = 'none'; document.getElementById('tekkur-yazisi').style.display = 'block'; }, 2300);
         setTimeout(() => { document.getElementById('intro-container').style.display = 'none'; document.getElementById('menu-toggle-btn').style.display = 'flex'; }, 4000);
 
-        // BARDAĞI TAŞIRMA OYUNU (DOKUNMA DESTEKLİ)
+        // BARDAĞI TAŞIRMA OYUNU
         let waterLevel = 0, isPressing = false, cupInterval = null, cupPlayer = 1, cupGameOver = false, maxLimit = 90;
         function startCupGame() {
             waterLevel = 0; isPressing = false; cupPlayer = 1; cupGameOver = false;
@@ -633,6 +669,131 @@
             btn.innerText = "Yeniden Başlat";
             btn.onmousedown = startCupGame;
             btn.ontouchstart = (e) => { e.preventDefault(); startCupGame(); };
+        }
+
+        /* OYUN 1: XOX OYUNU (TIC TAC TOE) */
+        let tttBoard = ["","","","","","","","",""], tttTurn = "X", tttActive = true;
+        function startTicTacToe() {
+            tttBoard = ["","","","","","","","",""]; tttTurn = "X"; tttActive = true;
+            document.getElementById('ttt-status').textContent = "Sıra: X";
+            const board = document.getElementById('tictactoe-board'); board.innerHTML = '';
+            for(let i=0; i<9; i++) {
+                const sq = document.createElement('div'); sq.className = 'ttt-square';
+                sq.onclick = () => handleTTTClick(i); board.appendChild(sq);
+            }
+        }
+        function handleTTTClick(i) {
+            if(!tttActive || tttBoard[i] !== "") return;
+            tttBoard[i] = tttTurn;
+            const sqs = document.querySelectorAll('.ttt-square');
+            sqs[i].textContent = tttTurn;
+            if(tttTurn === "X") sqs[i].style.color = "#39ff14"; else sqs[i].style.color = "#bc13fe";
+            if(checkTTTWin()) {
+                document.getElementById('ttt-status').textContent = `🎉 Kazanan: ${tttTurn}!`;
+                tttActive = false; return;
+            }
+            if(!tttBoard.includes("")) {
+                document.getElementById('ttt-status').textContent = "🤝 Berabere!";
+                tttActive = false; return;
+            }
+            tttTurn = tttTurn === "X" ? "O" : "X";
+            document.getElementById('ttt-status').textContent = `Sıra: ${tttTurn}`;
+        }
+        function checkTTTWin() {
+            const wins = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+            return wins.some(w => tttBoard[w[0]] !== "" && tttBoard[w[0]] === tttBoard[w[1]] && tttBoard[w[1]] === tttBoard[w[2]]);
+        }
+
+        /* OYUN 2: TAŞ KAĞIT MAKAS */
+        let rpsUserScore = 0, rpsBotScore = 0;
+        function resetRPS() {
+            rpsUserScore = 0; rpsBotScore = 0;
+            document.getElementById('rpsUserScore').textContent = 0;
+            document.getElementById('rpsBotScore').textContent = 0;
+            document.getElementById('rps-result').textContent = "Hamleni Seç!";
+        }
+        function playRPS(userPick) {
+            const opts = ['🪨', '📄', '✂️'];
+            const botPick = opts[Math.floor(Math.random() * 3)];
+            let res = "";
+            if(userPick === botPick) res = "Berabere! 🤝";
+            else if((userPick==='🪨'&&botPick==='✂️') || (userPick==='📄'&&botPick==='🪨') || (userPick==='✂️'&&botPick==='📄')) {
+                res = "Kazandın! 🎉"; rpsUserScore++;
+            } else {
+                res = "Kaybettin! 🤖"; rpsBotScore++;
+            }
+            document.getElementById('rpsUserScore').textContent = rpsUserScore;
+            document.getElementById('rpsBotScore').textContent = rpsBotScore;
+            document.getElementById('rps-result').textContent = `Sen: ${userPick} vs Bot: ${botPick} -> ${res}`;
+        }
+
+        /* OYUN 3: TUĞLA KIRMA (BRICK BREAKER) */
+        let brickInterval;
+        function startBrickGame() {
+            const canvas = document.getElementById('brickCanvas');
+            const ctx = canvas.getContext('2d');
+            let paddleW = 80, paddleH = 10, paddleX = (canvas.width - paddleW)/2;
+            let x = canvas.width/2, y = canvas.height - 30, dx = 3, dy = -3, ballR = 8, score = 0;
+            let brickRows = 4, brickCols = 6, bW = 68, bH = 20, bPadding = 10, bOffsetTop = 30, bOffsetLeft = 18;
+            let bricks = [];
+            for(let c=0; c<brickCols; c++) {
+                bricks[c] = [];
+                for(let r=0; r<brickRows; r++) bricks[c][r] = { x: 0, y: 0, status: 1 };
+            }
+
+            const movePaddle = (e) => {
+                let rect = canvas.getBoundingClientRect();
+                let clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                paddleX = (clientX - rect.left) * (canvas.width / rect.width) - paddleW / 2;
+            };
+            canvas.onmousemove = movePaddle;
+            canvas.ontouchmove = (e) => { e.preventDefault(); movePaddle(e); };
+
+            clearInterval(brickInterval);
+            brickInterval = setInterval(() => {
+                if(document.getElementById('popup-brick').style.display !== 'flex') { clearInterval(brickInterval); return; }
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                // Tuğlaları çiz
+                for(let c=0; c<brickCols; c++) {
+                    for(let r=0; r<brickRows; r++) {
+                        if(bricks[c][r].status === 1) {
+                            let bx = c*(bW+bPadding)+bOffsetLeft;
+                            let by = r*(bH+bPadding)+bOffsetTop;
+                            bricks[c][r].x = bx; bricks[c][r].y = by;
+                            ctx.fillStyle = r%2===0 ? "#bc13fe" : "#00f2ff";
+                            ctx.fillRect(bx, by, bW, bH);
+                        }
+                    }
+                }
+
+                // Top & Raket
+                ctx.fillStyle = "#39ff14"; ctx.beginPath(); ctx.arc(x, y, ballR, 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = "#fff"; ctx.fillRect(paddleX, canvas.height - paddleH - 5, paddleW, paddleH);
+
+                // Tuğla çarpışma
+                for(let c=0; c<brickCols; c++) {
+                    for(let r=0; r<brickRows; r++) {
+                        let b = bricks[c][r];
+                        if(b.status === 1 && x > b.x && x < b.x + bW && y > b.y && y < b.y + bH) {
+                            dy = -dy; b.status = 0; score += 10;
+                            document.getElementById('brickScore').textContent = score;
+                            if(score > (highScores.brick || 0)) { highScores.brick = score; saveStats(); }
+                        }
+                    }
+                }
+
+                if(x + dx > canvas.width - ballR || x + dx < ballR) dx = -dx;
+                if(y + dy < ballR) dy = -dy;
+                else if(y + dy > canvas.height - ballR - 10) {
+                    if(x > paddleX && x < paddleX + paddleW) dy = -dy;
+                    else if(y + dy > canvas.height - ballR) {
+                        alert("Oyun Bitti! Skorunuz: " + score);
+                        startBrickGame(); return;
+                    }
+                }
+                x += dx; y += dy;
+            }, 1000/60);
         }
 
         // YAPAY ZEKA MOTORU
@@ -710,7 +871,7 @@
             return false;
         }
 
-        // TENİS (DOKUNMATİK DESTEKLİ)
+        // TENİS
         let pongInterval; let playerScore = 0, botScore = 0;
         function startTennisGame() {
             const canvas = document.getElementById('pongCanvas'); const ctx = canvas.getContext('2d');
@@ -765,7 +926,7 @@
             if(!choice1) choice1 = c; else { choice2 = c; if(choice1.dataset.icon === choice2.dataset.icon) { choice1 = null; choice2 = null; } else { setTimeout(() => { choice1.textContent = ''; choice2.textContent = ''; choice1.classList.remove('flipped'); choice2.classList.remove('flipped'); choice1 = null; choice2 = null; }, 800); } }
         }
 
-        // YILAN (KLAVYE + MOBİL BUTON)
+        // YILAN
         let snakeInterval, dx = 20, dy = 0;
         function setSnakeDir(dir) {
             if (dir === 'LEFT' && dx === 0) { dx = -20; dy = 0; }
