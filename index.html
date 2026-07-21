@@ -5283,3 +5283,16 @@
     </script>
 </body>
 </html>
+function cqAttack(id) {
+            let e = cqEnemies.find(x => x.id === id); if(!e || cqArmy <= 0) return;
+            let pPower = cqArmy * (1 + cqTech*0.2) * (Math.random()*0.4 + 0.8); let ePower = e.army * (Math.random()*0.4 + 0.8);
+            if(pPower > ePower) {
+                let cap = Math.min(e.land, Math.floor(Math.random()*6)+5); e.land -= cap; cqLand += cap;
+                let loss = Math.floor(cqArmy * 0.25); cqArmy -= loss; e.army = Math.floor(e.army * 0.3); cqGold += (cap * 30);
+                cqLog(`ZAFER! %${cap} toprak alındı.`); if(e.land <= 0) cqLog(`${e.name} yok edildi!`);
+            } else { let loss = Math.floor(cqArmy * 0.5); cqArmy -= loss; cqLog(`YENİLGİ! Savaş kaybedildi.`); }
+            cqUpdateUI();
+        }
+    </script> 
+</body>
+</html>
